@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "921124350487",
+    "firebase_url": "https://mirv-59f7c-default-rtdb.firebaseio.com",
+    "project_id": "mirv-59f7c",
+    "storage_bucket": "mirv-59f7c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921124350487:android:132f030dc7f35e4b2eca52",
+        "android_client_info": {
+          "package_name": "com.example.hello"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "921124350487-r6mts6anqgro8cvv558bk48gl7rpmvb7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcRE_wBE7jN6NXFMrEyNgayAgvq_5CiXs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "921124350487-r6mts6anqgro8cvv558bk48gl7rpmvb7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
