@@ -3,6 +3,8 @@ import 'dart:math';
 
 // import 'package:flutter/material.dart';
 
+import 'package:uuid/uuid.dart';
+
 import '../models/Product.dart';
 import '../models/chat.dart';
 import '../models/comment.dart';
@@ -66,9 +68,15 @@ List<String> titles = [
   "Les Amants",
 ];
 
-List<User> users = List.generate(
+List<User> users =[User(
+myId: Uuid().v4(),
+profile: "assets/images/dm${random.nextInt(4)}.jpg",
+username: names[0],
+password: 'admin')];
+List<User> users2 = List.generate(
     11,
     (index) => User(
+        myId: Uuid().v4(),
         profile: "assets/images/dm${random.nextInt(4)}.jpg",
         username: names[index],
         password: 'admin'));
@@ -117,6 +125,7 @@ double? getdouble(int index) {
 List<Product> products = List.generate(
     20,
     (index) => Product(
+       myId: Uuid().v4(),
         title: titles[index],
         description: descriptions[index],
         image: "assets/images/dm${random.nextInt(4)}.jpg",
@@ -127,6 +136,7 @@ StreamController<List<Product>> productsStream = StreamController<List<Product>>
 
 List<NotificationCustom> notifs = [
   NotificationCustom(
+     myId: Uuid().v4(),
     receiver: currentUser,
     isAbout: getUserByName(names[random.nextInt(10)]),
     message:
@@ -134,52 +144,53 @@ List<NotificationCustom> notifs = [
   ),
   NotificationCustom(
     receiver: currentUser,
+     myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} mentioned you in a comment",
   ),
-  NotificationCustom(
+  NotificationCustom( myId: Uuid().v4(),
     receiver: currentUser,
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} shared your post",
   ),
-  NotificationCustom(
+  NotificationCustom( myId: Uuid().v4(),
     receiver: currentUser,
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} commented on your post",
   ),
   NotificationCustom(
-    receiver: currentUser,
+    receiver: currentUser, myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} replied to your comment",
   ),
   NotificationCustom(
-    receiver: currentUser,
+    receiver: currentUser, myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} reacted to your comment",
   ),
   NotificationCustom(
-    receiver: currentUser,
+    receiver: currentUser, myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} asked you to join a Group️",
   ),
   NotificationCustom(
-    receiver: currentUser,
+    receiver: currentUser, myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} asked you to like a page",
   ),
   NotificationCustom(
-    receiver: currentUser,
+    receiver: currentUser, myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "You have memories with ${names[random.nextInt(10)]}",
   ),
   NotificationCustom(
-    receiver: currentUser,
+    receiver: currentUser, myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message:
         "${names[random.nextInt(10)]} Tagged you and ${random.nextInt(100)} others in a post",
   ),
   NotificationCustom(
-    receiver: currentUser,
+    receiver: currentUser, myId: Uuid().v4(),
     isAbout: getUserByName(names[random.nextInt(10)]),
     message: "${names[random.nextInt(10)]} Sent you a friend request",
   ),
@@ -189,11 +200,12 @@ StreamController<List<NotificationCustom>> notificationsStream = StreamControlle
 
 String defaultimg='';
 // List<Trade> trades=
+List<Post> posts =[];
 
-List<Post> posts = List.generate(
+List<Post> posts2 = List.generate(
     11,
     (index) => Post(
-          author: getUserByName(names[random.nextInt(10)])!,
+          author: getUserByName(names[random.nextInt(10)])!, myId: Uuid().v4(),
           caption: messages[random.nextInt(10)],
           product: products[random.nextInt(18)],
           isRepost: random.nextBool(),
@@ -204,7 +216,7 @@ StreamController<List<Post>> postsStream = StreamController<List<Post>>.broadcas
 
 List<Message> messagesGenerales = List.generate(
     10,
-    (index) => Message(
+    (index) => Message( myId: Uuid().v4(),
         message: messages[random.nextInt(10)],
         send: DateTime.now(),
         sender: index % 2 == 0 ? currentUser : users[3],
@@ -212,10 +224,10 @@ List<Message> messagesGenerales = List.generate(
 
 List<Chat> chats = List.generate(
     3,
-    (index) => Chat(
+    (index) => Chat( myId: Uuid().v4(),
         messages: List.generate(
             10,
-            (index) => Message(
+            (index) => Message( myId: Uuid().v4(),
                 message: messages[random.nextInt(10)],
                 send: DateTime.now(),
                 sender: index % 2 == 0 ? currentUser : users[3],
@@ -227,7 +239,7 @@ StreamController<List<Chat>> chatsStream = StreamController<List<Chat>>.broadcas
 
 List<Trade> trades = List.generate(
     6,
-    (index) => Trade(
+    (index) => Trade( myId: Uuid().v4(),
         amout: random.nextDouble() * 100000,
         sender: index % 2 == 0 ? currentUser : users[3],
         receiver: index % 2 == 1 ? currentUser : users[3],
@@ -238,20 +250,20 @@ List<Trade> trades = List.generate(
 
 
 List<Followers> followersGenerale = [
-  Followers(first: currentUser, followedBack: users[0], isFollowBack: true),
-  Followers(first: currentUser, followedBack: users[1], isFollowBack: false),
-  Followers(first: currentUser, followedBack: users[2], isFollowBack: true),
-  Followers(first: currentUser, followedBack: users[4], isFollowBack: false),
-  Followers(first: currentUser, followedBack: users[5], isFollowBack: true),
-  Followers(first: currentUser, followedBack: users[6], isFollowBack: true),
-  Followers(first: currentUser, followedBack: users[7], isFollowBack: true),
-  Followers(first: currentUser, followedBack: users[8], isFollowBack: true),
-  Followers(first: users[9], followedBack: currentUser, isFollowBack: false),
-  Followers(first: users[10], followedBack: currentUser, isFollowBack: true)
+  Followers(first: currentUser, myId: Uuid().v4(), followedBack: users[0], isFollowBack: true),
+  Followers(first: currentUser, myId: Uuid().v4(), followedBack: users[1], isFollowBack: false),
+  Followers(first: currentUser, myId: Uuid().v4(), followedBack: users[2], isFollowBack: true),
+  Followers(first: currentUser, myId: Uuid().v4(), followedBack: users[4], isFollowBack: false),
+  Followers(first: currentUser, followedBack: users[5], myId: Uuid().v4(), isFollowBack: true),
+  Followers(first: currentUser, followedBack: users[6], myId: Uuid().v4(), isFollowBack: true),
+  Followers(first: currentUser, followedBack: users[7], myId: Uuid().v4(), isFollowBack: true),
+  Followers(first: currentUser, followedBack: users[8], myId: Uuid().v4(), isFollowBack: true),
+  Followers(first: users[9], followedBack: currentUser,  myId: Uuid().v4(),isFollowBack: false),
+  Followers(first: users[10], followedBack: currentUser, myId: Uuid().v4(), isFollowBack: true)
 ];
 
 List<Comment> comments=List.generate(
-  50, (index) => Comment(
+  50, (index) => Comment( myId: Uuid().v4(),
     comment:messages[random.nextInt(10)],
     author:users[random.nextInt(10)], 
     post:posts[random.nextInt(10)],

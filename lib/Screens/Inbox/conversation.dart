@@ -4,6 +4,7 @@ import 'package:hello/components/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../models/chat.dart';
 import '../../models/message.dart';
@@ -126,7 +127,7 @@ class _ConversationState extends State<Conversation> {
                       if (chats.isNotEmpty) {
                         Chat? chat;
                         try {
-                          chat = chats.firstWhere((element) => element.id == widget.chat.id);
+                          chat = chats.firstWhere((element) => element.myId == widget.chat.myId);
                         } catch (e) {
                           // Handle case when chat is not found
                           return Center(
@@ -144,7 +145,7 @@ class _ConversationState extends State<Conversation> {
                             reverse: true,
                             itemBuilder: (BuildContext context, int index) {
                               Message msg = messages[index];
-                              return ChatBubble(msg: msg, chatid: widget.chat.id, refresh: () => setState(() {}));
+                              return ChatBubble(msg: msg, chatid: widget.chat.myId, refresh: () => setState(() {}));
                             },
                           );
                         } else {
@@ -174,7 +175,7 @@ class _ConversationState extends State<Conversation> {
           //   builder: (BuildContext context, AsyncSnapshot<List<Chat>> snapshot) {
           //
           //     if (snapshot.hasData) {
-          //       List<Message> messages = snapshot.data!.firstWhere((element) => element.id==widget.chat.id).messages;
+          //       List<Message> messages = snapshot.data!.firstWhere((element) => element.myId==widget.chat.myId).messages;
           //       return ListView.builder(
           //         controller: _scrollController,
           //         padding: EdgeInsets.symmetric(horizontal: 10),
@@ -182,7 +183,7 @@ class _ConversationState extends State<Conversation> {
           //         reverse: true,
           //         itemBuilder: (BuildContext context, int index) {
           //           Message msg = messages[index];
-          //           return ChatBubble(msg: msg,chatid: widget.chat.id, refresh: () => setState(() {}));
+          //           return ChatBubble(msg: msg,chatid: widget.chat.myId, refresh: () => setState(() {}));
           //         },
           //       );
           //     } else if (snapshot.hasError) {
@@ -261,7 +262,7 @@ class _ConversationState extends State<Conversation> {
                                       'Vous pouvez pas envoyer un message vide');
                             } else {
                               Message _message = Message(
-                                sender: currentUser,
+                                sender: currentUser, myId: Uuid().v4(),
                                 message: _userInput,
                                 send: DateTime.now(),
                               );

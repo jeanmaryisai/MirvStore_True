@@ -1,5 +1,6 @@
 import 'package:hello/Screens/Home/home_card.dart';
 import 'package:hello/Screens/hiddenPage.dart';
+import 'package:hello/Screens/sign_in/sign_in_screen.dart';
 import 'package:hello/components/Custom_NavBar.dart';
 import 'package:hello/components/data.dart';
 import 'package:hello/components/enums.dart';
@@ -144,14 +145,15 @@ class _HomeState extends State<HomeScreen> {
                                                 leading: Icon(Icons.logout),
                                                 title: Text('Log Out'),
                                                 onTap: () {
-                                                  // Handle log out action
-                                                  Navigator.pop(context);
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen()));
+                                                  // Navigator.pop(context);
                                                 },
                                               ),
                                               ListTile(
                                                 leading: Icon(Icons.edit),
                                                 title: Text('Change Bio'),
                                                 onTap: () {
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen()));
                                                   // Handle change bio action
                                                   Navigator.pop(context);
                                                   showBioDialog(context);

@@ -5,6 +5,7 @@ import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hello/components/data.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../models/chat.dart';
 import '../../models/message.dart';
@@ -286,7 +287,7 @@ class _HomeCardState extends State<HomeCard> {
                           // !widget.post.product.isAvailable
 
                               ? SizedBox()
-                              : widget.post.product.owner.id == currentUser.id
+                              : widget.post.product.owner.myId == currentUser.myId
                               ? !widget.post.product.isAvailable
                               ? InkWell(
                             onTap: () {
@@ -359,12 +360,12 @@ class _HomeCardState extends State<HomeCard> {
                                   onPositiveClick: () {
                                     bool s = widget.post.product.staticPrice !=
                                         null;
-                                    Message msg = Message(send: DateTime.now(),
+                                    Message msg = Message(send: DateTime.now(), myId: Uuid().v4(),
                                         trade: Trade(sender: s
                                             ? widget.post.product.owner
                                             : currentUser,
                                           receiver: s ? currentUser : widget
-                                              .post.product.owner,
+                                              .post.product.owner, myId: Uuid().v4(),
                                           product: widget.post.product,
                                           amout: s ? widget.post.product
                                               .staticPrice! : 0,
@@ -373,7 +374,7 @@ class _HomeCardState extends State<HomeCard> {
                                         ),
                                         sender: currentUser);
                                     Chat chat = Chat(
-                                        user1: currentUser,
+                                        user1: currentUser, myId: Uuid().v4(),
                                         user2: widget
                                             .post
                                             .product
@@ -383,11 +384,11 @@ class _HomeCardState extends State<HomeCard> {
                                     if (chats.any((element) =>
                                     element
                                         .theOrther()
-                                        .id == widget.post.product.owner.id)) {
+                                        .myId == widget.post.product.owner.myId)) {
                                       chat = chats.firstWhere((element) =>
                                       element
                                           .theOrther()
-                                          .id == widget.post.product.owner.id);
+                                          .myId == widget.post.product.owner.myId);
                                     }
                                     updateChat(chat, msg);
                                     Navigator.of(context).pop;
@@ -434,7 +435,7 @@ class _HomeCardState extends State<HomeCard> {
                               ),
                             ),
                           ),
-                          widget.post.product.owner.id == currentUser.id ?
+                          widget.post.product.owner.myId == currentUser.myId ?
                           InkWell(
                             onTap: () {
 

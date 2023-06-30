@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../components/data.dart';
 
 class Post1 {
-  final String id;
+  final String myId;
   // Add more properties as needed
 
-  Post1({required this.id});
+  Post1({required this.myId});
 }
 
 class PostGridPage extends StatelessWidget {
@@ -31,7 +31,7 @@ class PostGridPage extends StatelessWidget {
               // Customize the grid item's appearance as needed
               margin: EdgeInsets.all(10),
               color: Colors.grey,
-              child: Center(child: Text(post.id)),
+              child: Center(child: Text(post.myId)),
             ),
           );
         }).toList(),
@@ -62,7 +62,7 @@ class FeedPage extends StatelessWidget {
                 children: [
                   ListTile(
                     key: itemKey,
-                    title: Text('Post ${selectedPost.id}'),
+                    title: Text('Post ${selectedPost.myId}'),
                     // Customize the post item's appearance as needed
                     // You can use the selectedPost object to display the relevant data
                   ),

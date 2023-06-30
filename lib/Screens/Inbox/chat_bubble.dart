@@ -288,7 +288,7 @@ class _NegociationCardState extends State<NegociationCard> {
                               ? widget.trade.isAccepted == null
                                   ? 'I am not satisfied with the current proposed price, I am proposing a new one'
                                   : widget.trade.isAccepted!
-                                      ? widget.trade.buyer.id == currentUser.id
+                                      ? widget.trade.buyer.myId == currentUser.myId
                                           ? 'this trade has been aggreed on both side please proceed to the checking and confirmation phase'
                                           : 'this trade has been aggreed on both side waiting for the checking and confirmation phase'
                                       : 'This trade has been declined'
@@ -318,7 +318,7 @@ class _NegociationCardState extends State<NegociationCard> {
               maxLines: 1,
             ),
             SizedBox(height: 16),
-            widget.trade.sender.id == currentUser.id
+            widget.trade.sender.myId == currentUser.myId
                 ? Text(
                     // 'Price: \$${widget.pr.toStringAsFixed(2)}',
                     'Trade sent',
@@ -332,7 +332,7 @@ class _NegociationCardState extends State<NegociationCard> {
                 : cc &&
                         !widget.trade.product.isSold &&
                         widget.trade.product.isAvailable
-                    ? widget.trade.product.owner.id == currentUser.id
+                    ? widget.trade.product.owner.myId == currentUser.myId
                         ? Text(
                             // 'Price: \$${widget.pr.toStringAsFixed(2)}',
                             'Waiting for check',
@@ -345,7 +345,7 @@ class _NegociationCardState extends State<NegociationCard> {
                           )
                         : ElevatedButton(
                             onPressed: () {
-                              showCheckingInfo(context,widget.trade.product.owner.address,widget.trade.id);
+                              showCheckingInfo(context,widget.trade.product.owner.address,widget.trade.myId);
                             },
                             style: ElevatedButton.styleFrom(
                               primary: Colors.red,

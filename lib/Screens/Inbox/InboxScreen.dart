@@ -7,6 +7,7 @@ import 'package:hello/components/enums.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../models/chat.dart';
 import '../../models/user.dart';
@@ -213,12 +214,12 @@ class _UserListDialogState extends State<UserListDialog>
                           ),
                           title: Text(user.username),
                           onTap: () {
-                            Chat chat = Chat(
+                            Chat chat = Chat( myId: Uuid().v4(),
                                 user1: currentUser, user2: user, messages: []);
                             chats.any((element) =>
-                                    element.theOrther().id == user.id)
+                                    element.theOrther().myId == user.myId)
                                 ? chat = chats.firstWhere((element) =>
-                                    element.theOrther().id == user.id)
+                                    element.theOrther().myId == user.myId)
                                 : print('no ${chat.messages.length}');
                             Navigator.of(context).pop;
                             Navigator.push(

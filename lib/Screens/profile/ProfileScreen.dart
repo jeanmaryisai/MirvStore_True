@@ -234,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  currentUser.id == widget.user.id
+                  currentUser.myId == widget.user.myId
                       ? SizedBox()
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -493,7 +493,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          widget.user.id==currentUser.id?
+          widget.user.myId==currentUser.myId?
           Positioned.fill(
             child: Align(
               alignment: Alignment.bottomCenter,
