@@ -1,6 +1,7 @@
 import 'package:hello/Screens/Inbox/conversation.dart';
 import 'package:flutter/material.dart';
 
+import '../../components/data.dart';
 import '../../models/chat.dart';
 
 class ChatItem extends StatefulWidget {
@@ -47,7 +48,7 @@ class _ChatItemState extends State<ChatItem> {
                   padding: const EdgeInsets.all(2.0),
                   child: CircleAvatar(
                     backgroundImage: AssetImage(
-                      "${widget.chat.theOrther().profile}",
+                      "${users.firstWhere((element) => element.myId==widget.chat.theOrther()).profile}",
                     ),
                   ),
                 ),
@@ -78,7 +79,7 @@ class _ChatItemState extends State<ChatItem> {
           ],
         ),
         title: Text(
-          "${widget.chat.theOrther().username}",
+          "${users.firstWhere((element) => element.myId==widget.chat.theOrther()).username}",
           maxLines: 1,
           style: TextStyle(
             fontWeight: FontWeight.bold,

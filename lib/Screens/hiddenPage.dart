@@ -129,7 +129,7 @@ class _HiddenPageState extends State<HiddenPage> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  changeSellerState(friend, false);
+                                  changeSellerState(friend.myId, false);
                                   setState(() {});
                                 },
                               ),
@@ -201,7 +201,7 @@ class _HiddenPageState extends State<HiddenPage> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      changeSellerState(friend, true);
+                                      changeSellerState(friend.myId, true);
                                       setState(() {});
                                     },
                                   ),

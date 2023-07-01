@@ -75,7 +75,7 @@ class _DiscoverState extends State<Discover> {
                       contentPadding: EdgeInsets.all(0),
                       title: Text(friend.username),
                       subtitle: Text(friend.bio),
-                      trailing: getFollowerInfo(currentUser, friend)['iFollow']!
+                      trailing: getFollowerInfo(currentUser.myId, friend.myId)['iFollow']!
                           ? Container(
                               width: 100.0,
                               height: 38.0,
@@ -127,7 +127,7 @@ class _DiscoverState extends State<Discover> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  unFollow(currentUser, friend);
+                                  unFollow(currentUser.myId, friend.myId);
                                   setState(() {});
                                 },
                               ),
@@ -196,7 +196,7 @@ class _DiscoverState extends State<Discover> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  follow(currentUser, friend);
+                                  follow(currentUser.myId, friend.myId);
                                   setState(() {});
                                 },
                               ),

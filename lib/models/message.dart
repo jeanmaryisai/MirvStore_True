@@ -11,9 +11,9 @@ import 'user.dart';
 class Message {
   String message;
   DateTime send;
-  Trade? trade;
+  String? trade;
   String myId;
-  User sender;
+  String sender;
   Message({
     this.message = '',
     required this.send,
@@ -27,7 +27,7 @@ class Message {
   }
 
   bool isMe() {
-    return sender.myId == currentUser.myId ? true : false;
+    return sender == currentUser.myId ? true : false;
   }
 
   String timeAgo() {
@@ -35,33 +35,19 @@ class Message {
   }
 
   String captionSTR() {
-    return isTrade() ? "Trade: \$${trade!.amout.toStringAsFixed(2)} for ${trade!.product.title}" : message;
+    return isTrade() ? "Trade: \$${trades.firstWhere((element) => element.myId==trade)!.amout.toStringAsFixed(2)} for ${products.firstWhere((element) => element.myId==trades.firstWhere((element) => element.myId==trade)!.product).title}" : message;
   }
 
 
-  Message copyWith({
-    String? message,
-    DateTime? send,
-    Trade? trade,
-    String? myId,
-    User? sender,
-  }) {
-    return Message(
-      message: message ?? this.message,
-      send: send ?? this.send,
-      trade: trade ?? this.trade,
-      myId: myId ?? this.myId,
-      sender: sender ?? this.sender,
-    );
-  }
+
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'message': message,
       'send': send.millisecondsSinceEpoch,
-      'trade': trade?.toMap(),
+      'trade': trade,
       'myId': myId,
-      'sender': sender.toMap(),
+      'sender': sender,
     };
   }
 
@@ -69,9 +55,9 @@ class Message {
     return Message(
       message: map['message'] as String,
       send: DateTime.fromMillisecondsSinceEpoch(map['send'] as int),
-      trade: map['trade'] != null ? Trade.fromMap(map['trade'] as Map<String,dynamic>) : null,
+      trade: map['trade'] != null ? map['trade'] as String : null,
       myId: map['myId'] as String,
-      sender: User.fromMap(map['sender'] as Map<String,dynamic>),
+      sender: map['sender'] as String,
     );
   }
 

@@ -7,8 +7,9 @@ import 'user.dart';
 
 class Comment {
   String comment;
-  User author;
-  Post post;
+  String author;
+  // User author;
+  String post;
   String myId;
   DateTime created;
   Comment({
@@ -21,27 +22,12 @@ class Comment {
 
 
 
-  Comment copyWith({
-    String? comment,
-    User? author,
-    Post? post,
-    String? myId,
-    DateTime? created,
-  }) {
-    return Comment(
-      comment: comment ?? this.comment,
-      author: author ?? this.author,
-      post: post ?? this.post,
-      myId: myId ?? this.myId,
-      created: created ?? this.created,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'comment': comment,
-      'author': author.toMap(),
-      'post': post.toMap(),
+      'author': author,
+      'post': post,
       'myId': myId,
       'created': created.millisecondsSinceEpoch,
     };
@@ -50,8 +36,8 @@ class Comment {
   factory Comment.fromMap(Map<String, dynamic> map) {
     return Comment(
       comment: map['comment'] as String,
-      author: User.fromMap(map['author'] as Map<String,dynamic>),
-      post: Post.fromMap(map['post'] as Map<String,dynamic>),
+      author: map['author'] as String,
+      post: map['post'] as String,
       myId: map['myId'] as String,
       created: DateTime.fromMillisecondsSinceEpoch(map['created'] as int),
     );

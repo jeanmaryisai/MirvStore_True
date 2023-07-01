@@ -56,7 +56,7 @@ class _HomeState extends State<HomeScreen> {
                                   GestureDetector(
                                     onTap: () {
                                       // showCommentDialog(context);
-                                      Navigator.push(
+                                      Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => Home(),
@@ -72,13 +72,15 @@ class _HomeState extends State<HomeScreen> {
                                     ),
                                   ),
                                   SizedBox(width: 20),
+                                  // currentUser.isSellerTrue()?
                                   InkWell(
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              NotificationPage(),
+                                              // NotificationPage(),
+                                          NewPost(),
                                           // PostGridPage(),
                                           // MyListView(),
                                         ),
@@ -91,10 +93,12 @@ class _HomeState extends State<HomeScreen> {
                                       // );
                                     },
                                     child: SvgPicture.asset(
-                                      "assets/icons/notification.svg",
+                                      "assets/icons/Plus Icon.svg",
                                       height: 30,
                                     ),
-                                  ),
+                                  )
+                                      // :SizedBox()
+                                  ,
                                   SizedBox(width: 20),
                                   // SvgPicture.asset(
                                   //   "assets/icons/search.svg",
@@ -145,7 +149,7 @@ class _HomeState extends State<HomeScreen> {
                                                 leading: Icon(Icons.logout),
                                                 title: Text('Log Out'),
                                                 onTap: () {
-                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen()));
+                                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignInScreen()));
                                                   // Navigator.pop(context);
                                                 },
                                               ),
@@ -153,7 +157,7 @@ class _HomeState extends State<HomeScreen> {
                                                 leading: Icon(Icons.edit),
                                                 title: Text('Change Bio'),
                                                 onTap: () {
-                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen()));
+                                                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen()));
                                                   // Handle change bio action
                                                   Navigator.pop(context);
                                                   showBioDialog(context);
@@ -307,7 +311,7 @@ class _HomeState extends State<HomeScreen> {
                                       (index) {
                                     Post post = posts[index];
                                     return GestureDetector(
-                                      onDoubleTap: (){like(post);},
+                                      onDoubleTap: (){like(post.myId);},
                                       child: HomeCard(
                                         onRepost: () => showDialog(
                                           context: context,

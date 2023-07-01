@@ -9,8 +9,8 @@ import 'message.dart';
 import 'user.dart';
 
 class Chat {
-  User user1;
-  User user2;
+  String user1;
+  String user2;
   List<Message> messages;
   String myId;
 
@@ -26,28 +26,16 @@ List<Message> getMessagesOrderedByMostRecent() {
     required this.myId,
   });
 
-  User theOrther() {
-    return user1.myId == currentUser.myId ? user2 : user1;
+  String theOrther() {
+    return user1 == currentUser.myId ? user2 : user1;
   }
 
-  Chat copyWith({
-    User? user1,
-    User? user2,
-    List<Message>? messages,
-    String? myId,
-  }) {
-    return Chat(
-      user1: user1 ?? this.user1,
-      user2: user2 ?? this.user2,
-      messages: messages ?? this.messages,
-      myId: myId ?? this.myId,
-    );
-  }
+
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'user1': user1.toMap(),
-      'user2': user2.toMap(),
+      'user1': user1,
+      'user2': user2,
       'messages': messages.map((x) => x.toMap()).toList(),
       'myId': myId,
     };
@@ -55,8 +43,8 @@ List<Message> getMessagesOrderedByMostRecent() {
 
   factory Chat.fromMap(Map<String, dynamic> map) {
     return Chat(
-      user1: User.fromMap(map['user1'] as Map<String,dynamic>),
-      user2: User.fromMap(map['user2'] as Map<String,dynamic>),
+      user1: map['user1'] as String,
+      user2: map['user2'] as String,
       messages: List<Message>.from((map['messages'] as List<int>).map<Message>((x) => Message.fromMap(x as Map<String,dynamic>),),),
       myId: map['myId'] as String,
     );
@@ -91,6 +79,10 @@ List<Message> getMessagesOrderedByMostRecent() {
   }
 }
 List<Chat> getChatsOrderedByMostRecent() {
-  chats.sort((a,b)=>a.getMessagesOrderedByMostRecent().first.send.compareTo(b.getMessagesOrderedByMostRecent().first.send));
+  chats
+      .where((element) => element.user1==currentUser.myId||element.user2==currentUser.myId)
+      .toList()
+
+      .sort((a,b)=>a.getMessagesOrderedByMostRecent().first.send.compareTo(b.getMessagesOrderedByMostRecent().first.send));
   return chats.reversed.toList();
 }

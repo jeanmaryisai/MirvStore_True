@@ -5,9 +5,9 @@ import 'chat.dart';
 import 'user.dart';
 
 class NotificationCustom {
-  User receiver;
+  String receiver;
   String message;
-  User? isAbout;
+  String? isAbout;
   String myId;
   NotificationCustom({
     required this.receiver,
@@ -17,34 +17,21 @@ class NotificationCustom {
   });
 
 
-  NotificationCustom copyWith({
-    User? receiver,
-    String? message,
-    User? isAbout,
-    String? myId,
-  }) {
-    return NotificationCustom(
-      receiver: receiver ?? this.receiver,
-      message: message ?? this.message,
-      isAbout: isAbout ?? this.isAbout,
-      myId: myId ?? this.myId,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'receiver': receiver.toMap(),
+      'receiver': receiver,
       'message': message,
-      'isAbout': isAbout?.toMap(),
+      'isAbout': isAbout,
       'myId': myId,
     };
   }
 
   factory NotificationCustom.fromMap(Map<String, dynamic> map) {
     return NotificationCustom(
-      receiver: User.fromMap(map['receiver'] as Map<String,dynamic>),
+      receiver: map['receiver'] as String,
       message: map['message'] as String,
-      isAbout: map['isAbout'] != null ? User.fromMap(map['isAbout'] as Map<String,dynamic>) : null,
+      isAbout: map['isAbout'] != null ? map['isAbout'] as String: null,
       myId: map['myId'] as String,
     );
   }

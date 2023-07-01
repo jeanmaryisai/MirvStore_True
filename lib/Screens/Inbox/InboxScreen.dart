@@ -215,11 +215,11 @@ class _UserListDialogState extends State<UserListDialog>
                           title: Text(user.username),
                           onTap: () {
                             Chat chat = Chat( myId: Uuid().v4(),
-                                user1: currentUser, user2: user, messages: []);
+                                user1: currentUser.myId, user2: user.myId, messages: []);
                             chats.any((element) =>
-                                    element.theOrther().myId == user.myId)
+                                    element.theOrther() == user.myId)
                                 ? chat = chats.firstWhere((element) =>
-                                    element.theOrther().myId == user.myId)
+                                    element.theOrther() == user.myId)
                                 : print('no ${chat.messages.length}');
                             Navigator.of(context).pop;
                             Navigator.push(

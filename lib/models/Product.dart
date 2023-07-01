@@ -9,7 +9,7 @@ class Product {
   String description;
   String image;
   double? staticPrice;
-  User owner;
+  String owner;
   bool isSold;
   String myId;
   bool isAvailable;
@@ -25,27 +25,7 @@ class Product {
   });
 
 
-  Product copyWith({
-    String? title,
-    String? description,
-    String? image,
-    double? staticPrice,
-    User? owner,
-    bool? isSold,
-    String? myId,
-    bool? isAvailable,
-  }) {
-    return Product(
-      title: title ?? this.title,
-      description: description ?? this.description,
-      image: image ?? this.image,
-      staticPrice: staticPrice ?? this.staticPrice,
-      owner: owner ?? this.owner,
-      isSold: isSold ?? this.isSold,
-      myId: myId ?? this.myId,
-      isAvailable: isAvailable ?? this.isAvailable,
-    );
-  }
+
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -53,7 +33,7 @@ class Product {
       'description': description,
       'image': image,
       'staticPrice': staticPrice,
-      'owner': owner.toMap(),
+      'owner': owner,
       'isSold': isSold,
       'myId': myId,
       'isAvailable': isAvailable,
@@ -66,7 +46,7 @@ class Product {
       description: map['description'] as String,
       image: map['image'] as String,
       staticPrice: map['staticPrice'] != null ? map['staticPrice'] as double : null,
-      owner: User.fromMap(map['owner'] as Map<String,dynamic>),
+      owner: map['owner'] as String,
       isSold: map['isSold'] as bool,
       myId: map['myId'] as String,
       isAvailable: map['isAvailable'] as bool,

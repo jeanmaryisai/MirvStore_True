@@ -5,8 +5,8 @@ import 'chat.dart';
 import 'user.dart';
 
 class Followers {
-  User first;
-  User followedBack;
+  String first;
+  String followedBack;
   bool isFollowBack;
   String myId;
   Followers({
@@ -16,26 +16,13 @@ class Followers {
     required this.myId,
   });
 
- 
 
-  Followers copyWith({
-    User? first,
-    User? followedBack,
-    bool? isFollowBack,
-    String? myId,
-  }) {
-    return Followers(
-      first: first ?? this.first,
-      followedBack: followedBack ?? this.followedBack,
-      isFollowBack: isFollowBack ?? this.isFollowBack,
-      myId: myId ?? this.myId,
-    );
-  }
+
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'first': first.toMap(),
-      'followedBack': followedBack.toMap(),
+      'first': first,
+      'followedBack': followedBack,
       'isFollowBack': isFollowBack,
       'myId': myId,
     };
@@ -43,8 +30,8 @@ class Followers {
 
   factory Followers.fromMap(Map<String, dynamic> map) {
     return Followers(
-      first: User.fromMap(map['first'] as Map<String,dynamic>),
-      followedBack: User.fromMap(map['followedBack'] as Map<String,dynamic>),
+      first: map['first'] as String,
+      followedBack:map['followedBack'] as String,
       isFollowBack: map['isFollowBack'] as bool,
       myId: map['myId'] as String,
     );
@@ -62,8 +49,8 @@ class Followers {
   @override
   bool operator ==(covariant Followers other) {
     if (identical(this, other)) return true;
-  
-    return 
+
+    return
       other.first == first &&
       other.followedBack == followedBack &&
       other.isFollowBack == isFollowBack &&

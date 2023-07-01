@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hello/components/data.dart';
 
 import '../../../models/post.dart';
 import '../../../utils.dart';
@@ -27,7 +28,7 @@ class RepostDialog extends StatelessWidget {
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundImage: AssetImage(post.product.owner.profile),
+                        backgroundImage: AssetImage(users.firstWhere((element) => element.myId== products.firstWhere((element) => element.myId== post.product).owner).profile),
                         radius: 25,
                       ),
                       SizedBox(
@@ -37,7 +38,7 @@ class RepostDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            post.product.owner.username,
+                            users.firstWhere((element) => element.myId==products.firstWhere((element) => element.myId ==post.product).owner).username,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
@@ -46,16 +47,16 @@ class RepostDialog extends StatelessWidget {
                           ),
                           SizedBox(height: 7),
                           Text(
-                            "This is the ${post.product.title} put on the market by ${post.product.owner.username}",
+                            "This is the ${products.firstWhere((element) => element.myId ==post.product).title} put on the market by ${users.firstWhere((element) => element.myId==products.firstWhere((element) => element.myId ==post.product).owner).username}",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color.fromARGB(255, 189, 187, 187),
                               fontSize: 10,
                             ),
                           ),
-                          post.product.isSold
+                          products.firstWhere((element) => element.myId ==post.product).isSold
                               ? Text(
-                                  "This product is already sold by ${post.product.owner.username}, you can wiew it but no one can but it annymore",
+                                  "This product is already sold by ${users.firstWhere((element) => element.myId==products.firstWhere((element) => element.myId ==post.product).owner).username}, you can wiew it but no one can but it annymore",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromARGB(255, 189, 187, 187),
@@ -88,7 +89,7 @@ class RepostDialog extends StatelessWidget {
             Container(
               height: 120,
               child: Image.asset(
-                post.product.image,
+                products.firstWhere((element) => element.myId ==post.product).image,
                 fit: BoxFit.cover,
               ),
             ),
@@ -109,7 +110,7 @@ class RepostDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      repost(post, _controller.text);
+                      repost(post.myId, _controller.text);
                       // TODO: Handle post logic
                       Navigator.pop(context); // Close the dialog
                     },

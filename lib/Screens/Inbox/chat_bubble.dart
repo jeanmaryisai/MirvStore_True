@@ -112,10 +112,10 @@ class _ChatBubbleState extends State<ChatBubble> {
                 ],
               )
             : PriceCard(
-                trade: widget.msg.trade!,
+                trade: trades.firstWhere((element) => element.myId ==widget.msg.trade)!,
                 color: chatBubbleColor(),
                 onAccept: () {},
-                onNewPropose: (propose) {newTrade(propose, widget.chatid, widget.msg.trade!);},
+                onNewPropose: (propose) {newTrade(propose, widget.chatid, trades.firstWhere((element) => element.myId ==widget.msg.trade)!);},
                 onDecline: () {},
                 time: widget.msg.timeAgo(),
                 isMe: widget.msg.isMe(),
@@ -241,7 +241,7 @@ class _NegociationCardState extends State<NegociationCard> {
           children: [
             Container(
               child: Text(
-                "Negociation ${widget.trade.sender.username}",
+                "Negociation ${users.firstWhere((element) => element.myId ==widget.trade.sender).username}",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.secondary,
                   fontWeight: FontWeight.bold,
@@ -256,7 +256,7 @@ class _NegociationCardState extends State<NegociationCard> {
             ClipRRect(
               borderRadius: BorderRadius.circular(25),
               child: Image.asset(
-                widget.trade.product.image,
+                products.firstWhere((element) => element.myId ==widget.trade.product).image,
                 height: 130,
                 width: MediaQuery.of(context).size.width / 1.3,
                 fit: BoxFit.cover,
@@ -271,7 +271,7 @@ class _NegociationCardState extends State<NegociationCard> {
                   SizedBox(height: 2.0),
                   Container(
                     child: Text(
-                      widget.trade.product.description,
+                      products.firstWhere((element) => element.myId ==widget.trade.product).description,
                       style: TextStyle(
                         color: Theme.of(context).textTheme.headline6!.color,
                         fontSize: 10.0,
@@ -283,12 +283,12 @@ class _NegociationCardState extends State<NegociationCard> {
                   SizedBox(height: 2.0),
                   Container(
                     child: Text(
-                      widget.trade.product.isAvailable
-                          ? !widget.trade.product.isSold
+                      products.firstWhere((element) => element.myId ==widget.trade.product).isAvailable
+                          ? !products.firstWhere((element) => element.myId ==widget.trade.product).isSold
                               ? widget.trade.isAccepted == null
                                   ? 'I am not satisfied with the current proposed price, I am proposing a new one'
                                   : widget.trade.isAccepted!
-                                      ? widget.trade.buyer.myId == currentUser.myId
+                                      ? widget.trade.buyer == currentUser.myId
                                           ? 'this trade has been aggreed on both side please proceed to the checking and confirmation phase'
                                           : 'this trade has been aggreed on both side waiting for the checking and confirmation phase'
                                       : 'This trade has been declined'
@@ -318,7 +318,7 @@ class _NegociationCardState extends State<NegociationCard> {
               maxLines: 1,
             ),
             SizedBox(height: 16),
-            widget.trade.sender.myId == currentUser.myId
+            widget.trade.sender == currentUser.myId
                 ? Text(
                     // 'Price: \$${widget.pr.toStringAsFixed(2)}',
                     'Trade sent',
@@ -330,9 +330,9 @@ class _NegociationCardState extends State<NegociationCard> {
                     maxLines: 1,
                   )
                 : cc &&
-                        !widget.trade.product.isSold &&
-                        widget.trade.product.isAvailable
-                    ? widget.trade.product.owner.myId == currentUser.myId
+                        !products.firstWhere((element) => element.myId ==widget.trade.product).isSold &&
+                products.firstWhere((element) => element.myId ==widget.trade.product).isAvailable
+                    ? products.firstWhere((element) => element.myId ==widget.trade.product).owner == currentUser.myId
                         ? Text(
                             // 'Price: \$${widget.pr.toStringAsFixed(2)}',
                             'Waiting for check',
@@ -345,7 +345,7 @@ class _NegociationCardState extends State<NegociationCard> {
                           )
                         : ElevatedButton(
                             onPressed: () {
-                              showCheckingInfo(context,widget.trade.product.owner.address,widget.trade.myId);
+                              showCheckingInfo(context,users.firstWhere((element) => element.myId ==products.firstWhere((element) => element.myId== widget.trade.product).owner).address,widget.trade.myId);
                             },
                             style: ElevatedButton.styleFrom(
                               primary: Colors.red,
@@ -359,13 +359,13 @@ class _NegociationCardState extends State<NegociationCard> {
                             ),
                           )
                     : Column(children: [
-                        isTradeUnactive(widget.trade)
+                        isTradeUnactive(widget.trade.myId)
                             ? DisabledButton(
                                 buttonText: 'Accept',
                               )
                             : ElevatedButton(
                                 onPressed: () {
-                                  confirmTrade(widget.trade, true);
+                                  confirmTrade(widget.trade.myId, true);
                                   widget.refresh;
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -380,13 +380,13 @@ class _NegociationCardState extends State<NegociationCard> {
                                 ),
                               ),
                         SizedBox(height: 8),
-                        isTradeUnactive(widget.trade)
+                        isTradeUnactive(widget.trade.myId)
                             ? DisabledButton(
                                 buttonText: 'Decline',
                               )
                             : ElevatedButton(
                                 onPressed: () {
-                                  confirmTrade(widget.trade, false);
+                                  confirmTrade(widget.trade.myId, false);
                                   widget.refresh;
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -401,7 +401,7 @@ class _NegociationCardState extends State<NegociationCard> {
                                 ),
                               ),
                         SizedBox(height: 16),
-                        isTradeUnactive(widget.trade)
+                        isTradeUnactive(widget.trade.myId)
                             ? SizedBox()
                             : Row(
                                 children: [

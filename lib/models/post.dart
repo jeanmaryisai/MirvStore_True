@@ -8,9 +8,9 @@ import 'chat.dart';
 import 'user.dart';
 
 class Post {
-  Product product;
+  String product;
   String caption;
-  User author;
+  String author;
   bool isRepost;
   String myId;
   List<User> liked;
@@ -24,29 +24,11 @@ class Post {
   });
 
 
-  Post copyWith({
-    Product? product,
-    String? caption,
-    User? author,
-    bool? isRepost,
-    String? myId,
-    List<User>? liked,
-  }) {
-    return Post(
-      product: product ?? this.product,
-      caption: caption ?? this.caption,
-      author: author ?? this.author,
-      isRepost: isRepost ?? this.isRepost,
-      myId: myId ?? this.myId,
-      liked: liked ?? this.liked,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'product': product.toMap(),
+      'product': product,
       'caption': caption,
-      'author': author.toMap(),
+      'author': author,
       'isRepost': isRepost,
       'myId': myId,
       'liked': liked.map((x) => x.toMap()).toList(),
@@ -55,9 +37,9 @@ class Post {
 
   factory Post.fromMap(Map<String, dynamic> map) {
     return Post(
-      product: Product.fromMap(map['product'] as Map<String,dynamic>),
+      product: map['product'] as String,
       caption: map['caption'] as String,
-      author: User.fromMap(map['author'] as Map<String,dynamic>),
+      author: map['author'] as String,
       isRepost: map['isRepost'] as bool,
       myId: map['myId'] as String,
       liked: List<User>.from((map['liked'] as List<dynamic>).map<User>((x) => User.fromMap(x as Map<String,dynamic>),),),

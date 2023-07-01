@@ -8,14 +8,14 @@ import 'chat.dart';
 import 'user.dart';
 
 class Trade {
-  User sender;
-  User receiver;
+  String sender;
+  String receiver;
   bool? isAccepted;
-  Product product;
+  String product;
   double amout;
   String myId;
   DateTime created;
-  User buyer;
+  String buyer;
   Trade({
     required this.sender,
     required this.receiver,
@@ -46,51 +46,29 @@ class Trade {
 
 
 
-  Trade copyWith({
-    User? sender,
-    User? receiver,
-    bool? isAccepted,
-    Product? product,
-    double? amout,
-    String? myId,
-    DateTime? created,
-    User? buyer,
-  }) {
-    return Trade(
-      sender: sender ?? this.sender,
-      receiver: receiver ?? this.receiver,
-      isAccepted: isAccepted ?? this.isAccepted,
-      product: product ?? this.product,
-      amout: amout ?? this.amout,
-      myId: myId ?? this.myId,
-      created: created ?? this.created,
-      buyer: buyer ?? this.buyer,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'sender': sender.toMap(),
-      'receiver': receiver.toMap(),
+      'sender': sender,
+      'receiver': receiver,
       'isAccepted': isAccepted,
-      'product': product.toMap(),
+      'product': product,
       'amout': amout,
       'myId': myId,
       'created': created.millisecondsSinceEpoch,
-      'buyer': buyer.toMap(),
+      'buyer': buyer,
     };
   }
 
   factory Trade.fromMap(Map<String, dynamic> map) {
     return Trade(
-      sender: User.fromMap(map['sender'] as Map<String,dynamic>),
-      receiver: User.fromMap(map['receiver'] as Map<String,dynamic>),
+      sender: map['sender'] as String,
+      receiver: map['receiver'] as String,
       isAccepted: map['isAccepted'] != null ? map['isAccepted'] as bool : null,
-      product: Product.fromMap(map['product'] as Map<String,dynamic>),
+      product: map['product'] as String,
       amout: map['amout'] as double,
       myId: map['myId'] as String,
       created: DateTime.fromMillisecondsSinceEpoch(map['created'] as int),
-      buyer: User.fromMap(map['buyer'] as Map<String,dynamic>),
+      buyer: map['buyer'] as String,
     );
   }
 

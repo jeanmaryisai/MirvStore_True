@@ -236,58 +236,58 @@ abstract class PostDb {
   }
 }
 
-abstract class NotificationCustomDb {
-  static Future<void> add(NotificationCustom notification) async {
-    final db = FirebaseFirestore.instance;
-    final notifications = db.collection("notifications");
-    notifications.doc(notification.myId).set(notification.toMap());
-  }
-
-  static Future<void> delete(String notificationId) async {
-    try {
-      // Get a reference to the notification document in Firestore
-      DocumentReference notificationRef =
-      FirebaseFirestore.instance.collection('notifications').doc(notificationId);
-
-      // Delete the notification document
-      await notificationRef.delete();
-      print('Notification deleted successfully');
-    } catch (error) {
-      print('Failed to delete notification: $error');
-    }
-  }
-
-  static Future<void> update(NotificationCustom updatedNotification, String notificationId) async {
-    try {
-      DocumentReference notificationRef =
-      FirebaseFirestore.instance.collection('notifications').doc(notificationId);
-
-      // Convert the updatedNotification object to a Map
-      Map<String, dynamic> notificationData = updatedNotification.toMap();
-
-      // Update the notification document with the new data
-      await notificationRef.update(notificationData);
-      print('Notification updated successfully');
-    } catch (error) {
-      print('Failed to update notification: $error');
-    }
-  }
-
-  static Future<void> get() async {
-    final db = FirebaseFirestore.instance;
-
-    db.collection("notifications").get().then(
-          (querySnapshot) {
-        print("Successfully completed");
-        for (var doc in querySnapshot.docs) {
-          final data = doc.data() as Map<String, dynamic>;
-          notifs.add(NotificationCustom.fromMap(data));
-        }
-      },
-      onError: (e) => print("Error completing: $e"),
-    );
-  }
-}
+// abstract class NotificationCustomDb {
+//   static Future<void> add(NotificationCustom notification) async {
+//     final db = FirebaseFirestore.instance;
+//     final notifications = db.collection("notifications");
+//     notifications.doc(notification.myId).set(notification.toMap());
+//   }
+//
+//   static Future<void> delete(String notificationId) async {
+//     try {
+//       // Get a reference to the notification document in Firestore
+//       DocumentReference notificationRef =
+//       FirebaseFirestore.instance.collection('notifications').doc(notificationId);
+//
+//       // Delete the notification document
+//       await notificationRef.delete();
+//       print('Notification deleted successfully');
+//     } catch (error) {
+//       print('Failed to delete notification: $error');
+//     }
+//   }
+//
+//   static Future<void> update(NotificationCustom updatedNotification, String notificationId) async {
+//     try {
+//       DocumentReference notificationRef =
+//       FirebaseFirestore.instance.collection('notifications').doc(notificationId);
+//
+//       // Convert the updatedNotification object to a Map
+//       Map<String, dynamic> notificationData = updatedNotification.toMap();
+//
+//       // Update the notification document with the new data
+//       await notificationRef.update(notificationData);
+//       print('Notification updated successfully');
+//     } catch (error) {
+//       print('Failed to update notification: $error');
+//     }
+//   }
+//
+//   static Future<void> get() async {
+//     final db = FirebaseFirestore.instance;
+//
+//     db.collection("notifications").get().then(
+//           (querySnapshot) {
+//         print("Successfully completed");
+//         for (var doc in querySnapshot.docs) {
+//           final data = doc.data() as Map<String, dynamic>;
+//           notifs.add(NotificationCustom.fromMap(data));
+//         }
+//       },
+//       onError: (e) => print("Error completing: $e"),
+//     );
+//   }
+// }
 
 abstract class MessageDb {
   static Future<void> add(Message message) async {

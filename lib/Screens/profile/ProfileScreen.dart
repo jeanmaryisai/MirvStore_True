@@ -152,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Container(
                               child: Text(
                                 numberFormat
-                                    .format(getFollowing(widget.user).length),
+                                    .format(getFollowing(widget.user.myId).length),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -179,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Container(
                               child: Text(
                                 numberFormat
-                                    .format(getFollowers(widget.user).length),
+                                    .format(getFollowers(widget.user.myId).length),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -206,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Container(
                               child: Text(
                                 numberFormat
-                                    .format(getLikeCountUser(widget.user)),
+                                    .format(getLikeCountUser()),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -239,7 +239,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                             getFollowerInfo(currentUser, widget.user)['iFollow']!
+                             getFollowerInfo(currentUser.myId, widget.user.myId)['iFollow']!
                           ? Container(
                               width: 100.0,
                               height: 38.0,
@@ -291,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  unFollow(currentUser, widget.user);
+                                  unFollow(currentUser.myId, widget.user.myId);
                                   setState(() {});
                                 },
                               ),
@@ -360,7 +360,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  follow(currentUser, widget.user);
+                                  follow(currentUser.myId, widget.user.myId);
                                   setState(() {});
                                 },
                               ),
@@ -421,14 +421,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     physics: NeverScrollableScrollPhysics(),
                     primary: false,
                     padding: EdgeInsets.all(5),
-                    itemCount: getUserPosts(widget.user).length,
+                    itemCount: getUserPosts(widget.user.myId).length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 200 / 300,
                     ),
 
                     itemBuilder: (BuildContext context, int index) {
-                      Post post = getUserPosts(widget.user)[index];
+                      Post post = getUserPosts(widget.user.myId)[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -445,7 +445,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15.0),
                                 child: Image.asset(
-                                  post.product.image,
+                                  products.firstWhere((element) => element.myId ==post.product).image,
                                   fit: BoxFit.fill,
                                 ),
                               ),

@@ -21,7 +21,7 @@ class ccreateState extends State<ccreate> {
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref().child('contacts');
+    dbRef = FirebaseDatabase.instance.ref().child('users');
   }
 
   @override
@@ -29,7 +29,7 @@ class ccreateState extends State<ccreate> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add Contacts',
+          'Add new Product',
           style: TextStyle(
             fontSize: 30,
           ),
@@ -130,7 +130,8 @@ class ccreateState extends State<ccreate> {
     try {
       var imagefile = FirebaseStorage.instance
           .ref()
-          .child("contact_photo")
+          // .child("contact_photo")
+          .child("profile_pic")
           .child("/${name.text}.jpg");
       UploadTask task = imagefile.putFile(file!);
       TaskSnapshot snapshot = await task;

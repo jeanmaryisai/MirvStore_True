@@ -26,9 +26,14 @@ Product? getProductByTitle(String caption) {
   return products.firstWhere((element) => element.description == caption);
 }
 
-void addCommentToPost(String caption, Post post) {
+void addTrade(Trade trade){
+  trades.add(trade);
+  TradeDb.add(trade);
+}
+
+void addCommentToPost(String caption, String post) {
   Comment comment = Comment(
-    author: currentUser,
+    author: currentUser.myId,
     myId: Uuid().v4(),
     post: post,
     comment: caption,
@@ -43,51 +48,51 @@ void addCommentToPost(String caption, Post post) {
   Fluttertoast.showToast(msg: 'Posted');
 }
 
-Map<String, bool> getFollowerInfo(User me, User you) {
+Map<String, bool> getFollowerInfo(String me, String you) {
   Map<String, bool> map = {
     'iFollow': false,
     'youFollow': false,
   };
   followersGenerale.forEach((element) {
-    if (element.first.myId == me.myId &&
-        element.followedBack.myId == you.myId) {
+    if (element.first == me &&
+        element.followedBack == you) {
       map['iFollow'] = true;
       element.isFollowBack ? map['youFollow'] = true : map['youFollow'] = false;
-      print(12);
+
     }
-    if (element.first.myId == you.myId &&
-        element.followedBack.myId == me.myId) {
+    if (element.first == you &&
+        element.followedBack == me) {
       map['youFollow'] = true;
       element.isFollowBack ? map['iFollow'] = true : map['iFollow'] = false;
-      print(13);
+
     }
   });
   return map;
 }
 
-List<User> getFollowers(User user) {
+List<User> getFollowers(String user) {
   List<User> follower = [];
   users.forEach((element) {
-    getFollowerInfo(user, element)['youFollow']! ? follower.add(element) : null;
+    getFollowerInfo(user, element.myId)['youFollow']! ? follower.add(element) : null;
   });
   return follower;
 }
 
-List<Comment> getCommentsByPost(Post post) {
+List<Comment> getCommentsByPost(String post) {
   List<Comment> c =
-  comments.where((element) => element.post.myId == post.myId).toList();
+  comments.where((element) => element.post == post).toList();
   c.sort(((a, b) => a.created.compareTo(b.created)));
   return c.reversed.toList();
 }
 
-void repost(Post post, String caption) {
+void repost(String post, String caption) {
   Post post2 = Post(
-      product: post.product,
+      product: posts.firstWhere((element) => element.myId==post).product,
       myId: Uuid().v4(),
       caption: caption,
-      author: currentUser,
+      author: currentUser.myId,
       isRepost: true,
-      liked: List.generate(5, (index) => users[random.nextInt(10)]));
+      liked: []);
 
 
   Fluttertoast.showToast(msg: 'Sending');
@@ -97,22 +102,22 @@ void repost(Post post, String caption) {
   Fluttertoast.showToast(msg: 'Reposted');
 }
 
-List<User> getFollowing(User user) {
+List<User> getFollowing(String user) {
   List<User> follower = [];
   users.forEach((element) {
-    getFollowerInfo(user, element)['iFollow']! ? follower.add(element) : null;
+    getFollowerInfo(user, element.myId)['iFollow']! ? follower.add(element) : null;
   });
   return follower;
 }
 
-void confirmTrade(Trade trade, bool accept) {
+void confirmTrade(String trade, bool accept) {
   trades
-      .firstWhere((element) => element.myId == trade.myId)
+      .firstWhere((element) => element.myId == trade)
       .isAccepted = accept;
   TradeDb.update(trades
-      .firstWhere((element) => element.myId == trade.myId), trade.myId);
+      .firstWhere((element) => element.myId == trade), trade);
   Chat chat = chats.firstWhere((element) =>
-      element.messages.any((element) => element.trade!.myId == trade.myId));
+      element.messages.any((element) => element.trade! == trade));
 
   chatsStream.add(chats);
   Fluttertoast.showToast(
@@ -129,16 +134,16 @@ String generateUniqueId() {
   return uuid.v4();
 }
 
-bool isTradeUnactive(Trade trade) {
+bool isTradeUnactive(String trade) {
   bool cc(bool? x) {
     return x ?? false;
   }
-
-  return trade.isAccepted != null ||
-      trade.product.isSold ||
-      !trade.product.isAvailable ||
+  Trade t= trades.firstWhere((element) => element.myId==trade);
+  return t.isAccepted != null ||
+      products.firstWhere((element) => element.myId==t.product).isSold ||
+      !products.firstWhere((element) => element.myId==t.product).isAvailable ||
       trades.any((element) =>
-      element.product.myId == trade.product.myId && cc(element.isAccepted));
+      products.firstWhere((element) => element.myId==t.product).myId == products.firstWhere((element) => element.myId==t.product).myId && cc(element.isAccepted));
 }
 
 void updateChat(Chat chat, Message message) {
@@ -147,18 +152,21 @@ void updateChat(Chat chat, Message message) {
         .firstWhere((element) => element.myId == chat.myId)
         .messages
         .add(message);
+
+    ChatDb.updateChat(chat, chat.myId);
   } else {
     chat.messages.add(message);
     chats.add(chat);
+    ChatDb.addChat(chat);
   }
   chatsStream.add(chats);
-  ChatDb.updateChat(chat, chat.myId);
+
 }
 
-void unFollow(User me, User you) {
+void unFollow(String me, String you) {
   for (var element in followersGenerale) {
-    if (element.first.myId == me.myId &&
-        element.followedBack.myId == you.myId &&
+    if (element.first == me &&
+        element.followedBack == you &&
         element.isFollowBack) {
       Followers f = Followers(
           first: you, myId: Uuid().v4(), followedBack: me, isFollowBack: false);
@@ -170,16 +178,16 @@ void unFollow(User me, User you) {
       FollowersDb.delete(element.myId);
       break;
     }
-    if (element.first.myId == me.myId &&
-        element.followedBack.myId == you.myId &&
+    if (element.first == me &&
+        element.followedBack == you &&
         !element.isFollowBack) {
       followersGenerale.remove(element);
 
       FollowersDb.delete(element.myId);
       break;
     }
-    if (element.first.myId == you.myId &&
-        element.followedBack.myId == me.myId &&
+    if (element.first == you &&
+        element.followedBack == me &&
         element.isFollowBack) {
       element.isFollowBack = false;
       FollowersDb.update(element, element.myId);
@@ -188,14 +196,14 @@ void unFollow(User me, User you) {
   }
 }
 
-void follow(User me, User you) {
+void follow(String me, String you) {
   bool b = false;
   // if (!(followersGenerale.any((element) =>
   //     element.first.myId == me.myId && element.followedBack.myId == you.myId))) {
   //   print(1);
   for (var element in followersGenerale) {
-    if (element.first.myId == you.myId &&
-        element.followedBack.myId == me.myId &&
+    if (element.first == you &&
+        element.followedBack == me &&
         !element.isFollowBack) {
       element.isFollowBack = true;
       FollowersDb.update(element, element.myId);
@@ -238,14 +246,14 @@ List<User> searchUsers(List<User> _users, String query) {
   }).toList();
 }
 
-void changeSellerState(User user, bool bol) {
+void changeSellerState(String user, bool bol) {
   users
-      .firstWhere((element) => user.myId == element.myId)
+      .firstWhere((element) => user == element.myId)
       .isSeller = bol;
-  User u = users.firstWhere((element) => user.myId == element.myId);
+  User u = users.firstWhere((element) => user== element.myId);
 
   usersStream.add(users);
-  UserDb.update(user, user.myId);
+  UserDb.update(users.firstWhere((element) => element.myId ==user), user);
 }
 
 void changeBio(String bio) {
@@ -277,10 +285,10 @@ int getLikeCount(Post post) {
   return post.liked.length;
 }
 
-int getLikeCountUser(User user) {
+int getLikeCountUser() {
   int total = 0;
   posts
-      .where((element) => element.author.myId == currentUser.myId)
+      .where((element) => element.author == currentUser.myId)
       .toList()
       .forEach((element) {
     total += getLikeCount(element);
@@ -288,29 +296,29 @@ int getLikeCountUser(User user) {
   return total;
 }
 
-bool isLike(Post post) {
-  return post.liked.any((element) => element.myId == currentUser.myId);
+bool isLike(String post) {
+  return posts.firstWhere((element) => element.myId==post).liked.any((element) => element.myId == currentUser.myId);
 }
 
-void like(Post post) {
+void like(String post) {
   !isLike(post)
       ? posts
-      .firstWhere((element) => element.myId == post.myId)
+      .firstWhere((element) => element.myId == post)
       .liked
       .add(currentUser)
       : posts
-      .firstWhere((element) => element.myId == post.myId)
+      .firstWhere((element) => element.myId == post)
       .liked
       .remove(currentUser);
   postsStream.add(posts);
   PostDb.update(posts
-      .firstWhere((element) => element.myId == post.myId), post.myId);
+      .firstWhere((element) => element.myId == post), post);
 
   postsStream.add(posts);
 }
 
-List<Post> getUserPosts(User user) {
-  return posts.where((element) => element.author.myId == user.myId).toList();
+List<Post> getUserPosts(String user) {
+  return posts.where((element) => element.author == user).toList();
 }
 
 void newTrade(double price, String chat, Trade trade) {
@@ -321,7 +329,7 @@ void newTrade(double price, String chat, Trade trade) {
     Trade newTrade = Trade(
       amout: price,
       myId: Uuid().v4(),
-      sender: currentUser,
+      sender: currentUser.myId,
       receiver: c.theOrther(),
       product: trade.product,
       buyer: trade.buyer,
@@ -330,8 +338,8 @@ void newTrade(double price, String chat, Trade trade) {
     c.messages.add(
         Message(send: DateTime.now(),
             myId: Uuid().v4(),
-            sender: currentUser,
-            trade: newTrade));
+            sender: currentUser.myId,
+            trade: newTrade.myId));
 
     chatsStream.add(chats);
     TradeDb.update(newTrade, newTrade.myId);
@@ -341,9 +349,10 @@ void newTrade(double price, String chat, Trade trade) {
 }
 
 void tradeConfirm(String trade, context, address) {
-  trades
+  products.firstWhere((element) => element.myId== trades
       .firstWhere((element) => trade == element.myId)
-      .product
+      .product)
+
       .isSold = true;
   trades
       .firstWhere((element) => trade == element.myId)
@@ -370,7 +379,7 @@ void tradeConfirm(String trade, context, address) {
   TradeDb.update(trades
       .firstWhere((element) => element.myId == trade), trade);
   Chat chat = chats.firstWhere((element) =>
-      element.messages.any((element) => element.trade!.myId == trade));
+      element.messages.any((element) => element.trade! == trade));
   ChatDb.updateChat(chat, chat.myId);
 }
 
@@ -405,7 +414,7 @@ void deletePost(Post post, BuildContext context) {
         onPositiveClick: () {
           post.isRepost
               ? PostDb.delete(post.myId)
-              : posts.forEach((element) { if(post.product.myId == element.product.myId){
+              : posts.forEach((element) { if(post.product == element.product){
               PostDb.delete(element.myId);}
           });
 
@@ -415,7 +424,7 @@ void deletePost(Post post, BuildContext context) {
               ? Fluttertoast.showToast(msg: "Post deleted")
               : Fluttertoast.showToast(msg: 'Failed to delete')
               : posts.removeWhere(
-                  (element) => post.product.myId == element.product.myId);
+                  (element) => post.product == element.product);
 
           postsStream.add(posts); // Replace this with your delete post logic
 
@@ -438,12 +447,17 @@ void deletePost(Post post, BuildContext context) {
     animationType: DialogTransitionType.fadeScale,
     curve: Curves.fastOutSlowIn,
     duration: Duration(milliseconds: 500),
-  );
-}
-
-Future<void> signup(User user) async{
+  );}
+void signup(User user) {
   Fluttertoast.showToast(msg: 'Creating profile');
    UserDb.add(user);
   users.add(user);
   Fluttertoast.showToast(msg: 'Profile created');
+}
+
+void newPost(Post post){
+  Fluttertoast.showToast(msg: 'Posting');
+  PostDb.add(post);
+  posts.add(post);
+  Fluttertoast.showToast(msg: 'New post');
 }

@@ -7,6 +7,7 @@ import 'package:hello/components/data.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../models/Product.dart';
 import '../../models/chat.dart';
 import '../../models/message.dart';
 import '../../models/post.dart';
@@ -37,6 +38,7 @@ class _HomeCardState extends State<HomeCard> {
 
   @override
   Widget build(BuildContext context) {
+    Product _p=products.firstWhere((element) => element.myId==widget.post.product);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: Stack(
@@ -64,7 +66,7 @@ class _HomeCardState extends State<HomeCard> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage(widget.post.product.image),
+                    image: AssetImage(products.firstWhere((element) => element.myId==widget.post.product).image),
                   ),
                   borderRadius: BorderRadius.circular(35),
                 ),
@@ -85,7 +87,7 @@ class _HomeCardState extends State<HomeCard> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      widget.post.product.title,
+                      _p.title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -102,10 +104,10 @@ class _HomeCardState extends State<HomeCard> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: !widget.post.product.isSold
-                        ? widget.post.product.staticPrice != null
+                    child: !_p.isSold
+                        ? _p.staticPrice != null
                         ? Text(
-                      "\$ ${widget.post.product.staticPrice!.toStringAsFixed(
+                      "\$ ${_p.staticPrice!.toStringAsFixed(
                           2)}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -225,7 +227,7 @@ class _HomeCardState extends State<HomeCard> {
                                   child: Padding(
                                       padding: const EdgeInsets.all(17.0),
                                       child: SvgPicture.asset(
-                                        isLike(widget.post)
+                                        isLike(widget.post.myId)
                                             ? "assets/icons/heart-shape-silhouette.svg"
                                             : "assets/icons/heart-shape-outine.svg",
                                         color: Color(0xffffffff),
@@ -233,7 +235,7 @@ class _HomeCardState extends State<HomeCard> {
                                 ),
                                 onTap: () {
                                   setState(() {
-                                    like(widget.post);
+                                    like(widget.post.myId);
                                   });
                                 },
                               ),
@@ -283,15 +285,15 @@ class _HomeCardState extends State<HomeCard> {
                               ),
                             ),
                           ),
-                          widget.post.product.isSold
+                          _p.isSold
                           // !widget.post.product.isAvailable
 
                               ? SizedBox()
-                              : widget.post.product.owner.myId == currentUser.myId
-                              ? !widget.post.product.isAvailable
+                              : _p.owner == currentUser.myId
+                              ? !_p.isAvailable
                               ? InkWell(
                             onTap: () {
-                              ProductChangeSate(widget.post.product);
+                              ProductChangeSate(_p);
                               setState(() {
 
                               });
@@ -317,7 +319,7 @@ class _HomeCardState extends State<HomeCard> {
                           )
                               : InkWell(
                             onTap: () {
-                              ProductChangeSate(widget.post.product);
+                              ProductChangeSate(_p);
                               setState(() {
 
                               });
@@ -341,7 +343,7 @@ class _HomeCardState extends State<HomeCard> {
                               ),
                             ),
                           )
-                              : !widget.post.product.isAvailable
+                              : !_p.isAvailable
                               ? SizedBox()
                               : InkWell(
                             onTap: () {
@@ -358,38 +360,40 @@ class _HomeCardState extends State<HomeCard> {
                                   positiveTextStyle: TextStyle(
                                       color: Colors.red),
                                   onPositiveClick: () {
-                                    bool s = widget.post.product.staticPrice !=
+                                    bool s = _p.staticPrice !=
                                         null;
+                                    Trade _trade=Trade(sender: s
+                                        ? _p.owner
+                                        : currentUser.myId,
+                                      receiver: s ? currentUser.myId : _p.owner, myId: Uuid().v4(),
+                                      product: _p.myId,
+                                      amout: s ? _p
+                                          .staticPrice! : 0,
+                                      created: DateTime.now(),
+                                      buyer: currentUser.myId,
+                                    );
                                     Message msg = Message(send: DateTime.now(), myId: Uuid().v4(),
-                                        trade: Trade(sender: s
-                                            ? widget.post.product.owner
-                                            : currentUser,
-                                          receiver: s ? currentUser : widget
-                                              .post.product.owner, myId: Uuid().v4(),
-                                          product: widget.post.product,
-                                          amout: s ? widget.post.product
-                                              .staticPrice! : 0,
-                                          created: DateTime.now(),
-                                          buyer: currentUser,
-                                        ),
-                                        sender: currentUser);
+                                        trade: _trade.myId,
+                                        sender: currentUser.myId);
                                     Chat chat = Chat(
-                                        user1: currentUser, myId: Uuid().v4(),
-                                        user2: widget
-                                            .post
-                                            .product
+                                        user1: currentUser.myId, myId: Uuid().v4(),
+                                        user2: _p
                                             .owner,
                                         messages: []);
 
                                     if (chats.any((element) =>
                                     element
                                         .theOrther()
-                                        .myId == widget.post.product.owner.myId)) {
+                                         == _p.owner)) {
                                       chat = chats.firstWhere((element) =>
                                       element
                                           .theOrther()
-                                          .myId == widget.post.product.owner.myId);
+                                           == _p.owner);
                                     }
+                                    // newTrade(price, chat, trade)
+
+                                    addTrade(_trade);
+
                                     updateChat(chat, msg);
                                     Navigator.of(context).pop;
                                     Navigator.push(
@@ -435,7 +439,7 @@ class _HomeCardState extends State<HomeCard> {
                               ),
                             ),
                           ),
-                          widget.post.product.owner.myId == currentUser.myId ?
+                          _p.owner == currentUser.myId ?
                           InkWell(
                             onTap: () {
 
@@ -481,10 +485,10 @@ class _HomeCardState extends State<HomeCard> {
                         children: [
                           CircleAvatar(
                             backgroundImage:
-                            AssetImage(widget.post.author.profile),
+                            AssetImage( users.firstWhere((element) => element.myId==widget.post.author).profile),
                             radius: 25,
                           ),
-                          widget.post.author.isSellerTrue()
+                          users.firstWhere((element) => element.myId==widget.post.author).isSellerTrue()
                               ? Positioned(
                             bottom: 0,
                             right: 0,
@@ -511,7 +515,7 @@ class _HomeCardState extends State<HomeCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.post.author.username,
+                            users.firstWhere((element) => element.myId==widget.post.author).username,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -521,7 +525,7 @@ class _HomeCardState extends State<HomeCard> {
                           SizedBox(height: 7),
                           Text(
                             widget.post.isRepost
-                                ? 'Repost from ${widget.post.product.owner
+                                ? 'Repost from ${ users.firstWhere((element) => element.myId==_p.owner)
                                 .username}'
                                 : 'Original Owner',
                             style: TextStyle(
@@ -549,7 +553,7 @@ class _HomeCardState extends State<HomeCard> {
                     children: [
                       Expanded(
                         child: Text(
-                          widget.post.product.description,
+                          _p.description,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xff00d289),

@@ -71,7 +71,7 @@ class _ConversationState extends State<Conversation> {
                       padding: const EdgeInsets.all(2.0),
                       child: CircleAvatar(
                         backgroundImage: AssetImage(
-                          "${widget.chat.theOrther().profile}",
+                          "${users.firstWhere((element) => element.myId==widget.chat.theOrther()).profile}",
                         ),
                       ),
                     ),
@@ -85,7 +85,7 @@ class _ConversationState extends State<Conversation> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        widget.chat.theOrther().username,
+                        users.firstWhere((element) => element.myId==widget.chat.theOrther()).username,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -262,7 +262,7 @@ class _ConversationState extends State<Conversation> {
                                       'Vous pouvez pas envoyer un message vide');
                             } else {
                               Message _message = Message(
-                                sender: currentUser, myId: Uuid().v4(),
+                                sender: currentUser.myId, myId: Uuid().v4(),
                                 message: _userInput,
                                 send: DateTime.now(),
                               );

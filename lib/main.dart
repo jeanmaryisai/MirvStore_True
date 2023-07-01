@@ -11,9 +11,9 @@ import 'models/user.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await dummydata();
   await UserDb.get();
   await PostDb.get();
-  // await dummydata();
   // TradeDb.retrieveTradesData();
   // TradeDb.addTrade(trades[0]);
   // TradeDb.getTrades();
@@ -108,11 +108,11 @@ Future<void> dummydata() async{
   posts.forEach((element) { PostDb.add(element); });
   chats.forEach((element) { ChatDb.addChat(element); });
   followersGenerale.forEach((element) { FollowersDb.add(element); });
-  messages.forEach((element) { MessageDb.add(element); });
+  messagesGenerales.forEach((element) { MessageDb.add(element); });
   // notifs.forEach((element) { No.add(element); });
-  products.forEach((element) { ProductDb.add(element); });
-  trades.forEach((element) { TradeDb.add(element); });
-  users.forEach((element) { UserDb.add(element); });
+  // products.forEach((element) { ProductDb.add(element); });
+  // trades.forEach((element) { TradeDb.add(element); });
+  // users.forEach((element) { UserDb.add(element); });
   // posts.forEach((element) { PostDb.add(element); });
   // posts.forEach((element) { PostDb.add(element); });
 }

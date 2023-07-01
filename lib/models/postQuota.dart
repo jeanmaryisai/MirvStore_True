@@ -5,8 +5,8 @@ import 'post.dart';
 import 'user.dart';
 
 class postPerQuota {
-  User user;
-  Post post;
+  String user;
+  String post;
   int quota;
   String myId;
   postPerQuota({
@@ -17,24 +17,11 @@ class postPerQuota {
   });
 
 
-  postPerQuota copyWith({
-    User? user,
-    Post? post,
-    int? quota,
-    String? myId,
-  }) {
-    return postPerQuota(
-      user: user ?? this.user,
-      post: post ?? this.post,
-      quota: quota ?? this.quota,
-      myId: myId ?? this.myId,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'user': user.toMap(),
-      'post': post.toMap(),
+      'user': user,
+      'post': post,
       'quota': quota,
       'myId': myId,
     };
@@ -42,8 +29,8 @@ class postPerQuota {
 
   factory postPerQuota.fromMap(Map<String, dynamic> map) {
     return postPerQuota(
-      user: User.fromMap(map['user'] as Map<String,dynamic>),
-      post: Post.fromMap(map['post'] as Map<String,dynamic>),
+      user: map['user'] as String,
+      post: map['post'] as String,
       quota: map['quota'] as int,
       myId: map['myId'] as String,
     );
