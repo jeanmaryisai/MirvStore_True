@@ -133,27 +133,49 @@ String generateUniqueId() {
   var uuid = Uuid();
   return uuid.v4();
 }
-
+bool cc(bool? x) {
+  return x ?? true;
+}
 bool isTradeUnactive(String trade) {
-  bool cc(bool? x) {
-    return x ?? false;
-  }
+  bool b=false;
+  Trade tradeObj = trades.firstWhere((element) => element.myId==trade);
+
+    Product p = products.firstWhere((product) => product.myId ==tradeObj.product);
+    if(trades.any((trade) => trade.product==p.myId && tradeObj.isAccepted==false)){
+      b= true;
+    }
+
   Trade t= trades.firstWhere((element) => element.myId==trade);
-  return t.isAccepted != null ||
+  return t.isAccepted == false ||
       products.firstWhere((element) => element.myId==t.product).isSold ||
-      !products.firstWhere((element) => element.myId==t.product).isAvailable ||
-      trades.any((element) =>
-      products.firstWhere((element) => element.myId==t.product).myId == products.firstWhere((element) => element.myId==t.product).myId && cc(element.isAccepted));
+      !products.firstWhere((element) => element.myId==t.product).isAvailable || b;
+  //     // trades.any((element) => element);
+  // print(b );
+  // return false;
+
+
+
+      // trades.any((trade) =>
+      // products.firstWhere((element2) => element2.myId==t.product).myId == products.firstWhere((element3) => element3.myId==t.product).myId && cc(element.isAccepted));
 }
 
 void updateChat(Chat chat, Message message) {
   if (chats.contains(chat)) {
-    chats
-        .firstWhere((element) => element.myId == chat.myId)
-        .messages
-        .add(message);
+    print('yes');
+    Chat c=chats
+        .firstWhere((element) => element.myId == chat.myId);
 
-    ChatDb.updateChat(chat, chat.myId);
+       c.messages
+        .add(message);
+    chats
+        .firstWhere((element) => element.myId == chat.myId).messages
+        .add(message);
+    print('djdkhjkdh');
+    print(c.toMap());
+    print(chats
+        .firstWhere((element) => element.myId == chat.myId).messages.length);
+    print(c.messages.length);
+    ChatDb.updateChat(c, c.myId);
   } else {
     chat.messages.add(message);
     chats.add(chat);
@@ -321,7 +343,7 @@ List<Post> getUserPosts(String user) {
   return posts.where((element) => element.author == user).toList();
 }
 
-void newTrade(double price, String chat, Trade trade) {
+void newTrade(double price, String chat, Trade trade) async {
   if (trade.amout == price) {
     Fluttertoast.showToast(msg: "This trade already exist");
   } else {
@@ -340,9 +362,9 @@ void newTrade(double price, String chat, Trade trade) {
             myId: Uuid().v4(),
             sender: currentUser.myId,
             trade: newTrade.myId));
-
+    trades.add(newTrade);
     chatsStream.add(chats);
-    TradeDb.update(newTrade, newTrade.myId);
+    await TradeDb.add(newTrade);
     ChatDb.updateChat(c, c.myId);
     Fluttertoast.showToast(msg: "New Trade send");
   }
@@ -357,13 +379,33 @@ void tradeConfirm(String trade, context, address) {
   trades
       .firstWhere((element) => trade == element.myId)
       .isAccepted = true;
+  Trade tr=trades.firstWhere((element) =>element.myId == trade);
+  Message msg=Message(
+    send: DateTime.now(),
+    myId: Uuid().v4(),
+    sender: products.firstWhere((element) => element.myId==tr.product).owner,
+    // trade: trades.firstWhere((element) => trade == element.myId).myId,
+    // product: trades.firstWhere((element) => trade == element.myId).product,
+    message:'I aggreed to sell the this product to the user of id ${tr.buyer}. We conclued on the price of ${tr.amout}. '
+  );
+
+  Message msg2=Message(
+      send: DateTime.now(),
+      myId: Uuid().v4(),
+      sender:currentUser.myId,
+      // sender: products.firstWhere((element) => element.myId==tr.product).owner,
+      // trade: trades.firstWhere((element) => trade == element.myId).myId,
+      // product: trades.firstWhere((element) => trade == element.myId).product,
+      message:'I aggreed to but the this product to the user of id ${products.firstWhere((element) => element.myId==tr.product).owner}. We conclued on the price of ${tr.amout}. '
+  );
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text('The product has been booked '),
         content: Text(
-            'This product is been booked by you, it will be unavailable on the app, we are waiting for you\n At our address:${address}\n we will stay in touch by then.'),
+            'This product is been booked by you, it will be unavailable on the app, we are waiting for you\n At our address:${address}\n we will stay in touch by then. Don\'t forget to bring the transaction id in order to buy the product as trade. \n Your trade id is: $trade '),
         actions: [
           TextButton(
             child: Text('OK'),
@@ -380,6 +422,7 @@ void tradeConfirm(String trade, context, address) {
       .firstWhere((element) => element.myId == trade), trade);
   Chat chat = chats.firstWhere((element) =>
       element.messages.any((element) => element.trade! == trade));
+  chat.messages.addAll([msg,msg2]);
   ChatDb.updateChat(chat, chat.myId);
 }
 
@@ -448,6 +491,7 @@ void deletePost(Post post, BuildContext context) {
     curve: Curves.fastOutSlowIn,
     duration: Duration(milliseconds: 500),
   );}
+
 void signup(User user) {
   Fluttertoast.showToast(msg: 'Creating profile');
    UserDb.add(user);

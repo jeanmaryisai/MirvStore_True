@@ -4,6 +4,7 @@ import 'package:hello/components/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../database.dart';
 import '../../models/user.dart';
 import '../../utils.dart';
 import '../profile/ProfileScreen.dart';
@@ -17,10 +18,21 @@ class Discover extends StatefulWidget {
 class _DiscoverState extends State<Discover> {
   @override
   List<User> _users=users;
+  var _userSub,_followersSub;
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _userSub = listenToUsers();
+    _followersSub = listenToFollowers();
+    // Start listening to changes in the "products" collection
   }
+
+  // @override
+  // void dispose() {
+  //   _userSub?.dispose();
+  //   _followersSub?.dispose();
+  //   super.dispose();
+  // }
 
   Widget build(BuildContext context) {
     return SafeArea(
@@ -66,7 +78,7 @@ class _DiscoverState extends State<Discover> {
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: CircleAvatar(
-                            backgroundImage: AssetImage(
+                            backgroundImage: NetworkImage(
                               friend.profile,
                             ),
                           ),

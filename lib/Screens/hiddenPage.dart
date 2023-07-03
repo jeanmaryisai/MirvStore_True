@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../models/user.dart';
 import '../../utils.dart';
+import '../database.dart';
 import 'profile/ProfileScreen.dart';
 
 class HiddenPage extends StatefulWidget {
@@ -23,6 +24,17 @@ class _HiddenPageState extends State<HiddenPage> {
         .where(
             (element) => element.isSeller == null || element.isSeller == true)
         .toList();
+
+      var _userSub,_followersSub;
+      @override
+      void initState() {
+        super.initState();
+        _userSub = listenToUsers();
+        _followersSub = listenToFollowers();
+        // Start listening to changes in the "products" collection
+      }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -68,7 +80,7 @@ class _HiddenPageState extends State<HiddenPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: CircleAvatar(
-                            backgroundImage: AssetImage(
+                            backgroundImage: NetworkImage(
                               friend.profile,
                             ),
                           ),

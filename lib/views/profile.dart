@@ -37,7 +37,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         padding: const EdgeInsets.all(10.0),
                         child: CircleAvatar(
                           radius: 70,
-                          backgroundImage: AssetImage(nf.avatarUrl),
+                          backgroundImage: NetworkImage(nf.avatarUrl),
                         ),
                       ),
                       SizedBox(height: 10.0),

@@ -47,7 +47,7 @@ class _ChatItemState extends State<ChatItem> {
                 child: Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: CircleAvatar(
-                    backgroundImage: AssetImage(
+                    backgroundImage: NetworkImage(
                       "${users.firstWhere((element) => element.myId==widget.chat.theOrther()).profile}",
                     ),
                   ),

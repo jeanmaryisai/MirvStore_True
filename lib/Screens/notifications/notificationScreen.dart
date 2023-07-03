@@ -116,7 +116,7 @@
 //                   child: Padding(
 //                     padding: const EdgeInsets.all(2.0),
 //                     child: CircleAvatar(
-//                       backgroundImage: AssetImage(
+//                       backgroundImage: NetworkImage(
 //                         notif.isAbout == null
 //                             ? defaultimg
 //                             : notif.isAbout!.profile,
@@ -217,7 +217,7 @@ void showCommentDialog(BuildContext context, Post post) {
                         Comment comment = comments[index];
                         return ListTile(
                           leading: CircleAvatar(
-                            backgroundImage: AssetImage(users.firstWhere((element) => element.myId==comment.author).profile),
+                            backgroundImage: NetworkImage(users.firstWhere((element) => element.myId==comment.author).profile),
                           ),
                           title: Text(
                             users.firstWhere((element) => element.myId==comment.author).username,

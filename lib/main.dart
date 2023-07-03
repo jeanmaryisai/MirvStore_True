@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:math';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hello/NavigationRoutes.dart';
 import 'package:hello/Screens/Home/HomeScreen.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +16,10 @@ import 'models/user.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await dummydata();
-  await UserDb.get();
-  await PostDb.get();
+  ChatDb.get();
+  // await dummydata();
+  // await UserDb.get();
+  // await PostDb.get();
   // TradeDb.retrieveTradesData();
   // TradeDb.addTrade(trades[0]);
   // TradeDb.getTrades();
@@ -34,8 +40,9 @@ class MyApp extends StatelessWidget {
         fontFamily: "Sans serif",
         visualDensity: VisualDensity.adaptivePlatformDensity, colorScheme: ColorScheme.fromSwatch(primarySwatch: colorCustom).copyWith(secondary: color[80]),
       ),
-      initialRoute: HomeScreen.routeName,
-      routes: routes,
+      // initialRoute: HomeScreen.routeName,
+      // routes: routes,
+      home: LoadingScreen(),
     );
   }
 }
@@ -115,4 +122,164 @@ Future<void> dummydata() async{
   // users.forEach((element) { UserDb.add(element); });
   // posts.forEach((element) { PostDb.add(element); });
   // posts.forEach((element) { PostDb.add(element); });
+}
+
+// import 'dart:async';
+// import 'dart:math';
+
+// import 'package:flutter/material.dart';
+// import 'package:connectivity/connectivity.dart';
+//
+class LoadingScreen extends StatefulWidget {
+  @override
+  _LoadingScreenState createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<LoadingScreen> {
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;final List<String> cuteArtMessages = [
+    'Exploring the world of art...',
+    'Embracing creativity and imagination...',
+    'Unlocking the magic of colors...',
+    'Admiring the beauty of brushstrokes...',
+    'Discovering the power of artistic expression...',
+    'Bringing art to life...',
+  ];
+
+
+
+  String currentMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    startLoading();
+    _startConnectivitySubscription();
+  }
+var _t;
+  @override
+  void dispose() {
+    _cancelConnectivitySubscription();
+    timer?.cancel();
+    timer=null;
+    super.dispose();
+  }
+var timer;
+  void startLoading() {
+
+    timer=Timer.periodic(Duration(seconds: 3), (timer) {
+      setState(() {
+        currentMessage = cuteArtMessages[Random().nextInt(cuteArtMessages.length)];
+      });
+    });
+    // Simulate data loading by delaying the navigation
+    Timer(Duration(seconds: 5), () {
+      Future.wait([
+        UserDb.get(),
+        PostDb.get(),
+        ChatDb.get(),
+        CommentDb.get(),
+        FollowersDb.get(),
+        ProductDb.get(),
+        TradeDb.get(),
+      ]).then((_) {
+        // Data retrieval complete, navigate to sign-in screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SignInScreen()),
+        );
+      }).catchError((error) {
+        // Handle error if any
+        Fluttertoast.showToast(msg:'Error retrieving data: $error');
+      });
+      // navigateToSignInScreen();
+    });
+  }
+
+  void navigateToSignInScreen() {
+    // Perform navigation logic to the sign-in screen
+  }
+
+  void _startConnectivitySubscription() {
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen((result) {
+          if (result == ConnectivityResult.none) {
+            showNoInternetDialog();
+          }
+        });
+  }
+
+  void _cancelConnectivitySubscription() {
+    _connectivitySubscription.cancel();
+  }
+
+  void showNoInternetDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('No Internet Connection'),
+          content: Text('Please check your internet connection and try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                navigateToSignInScreen();
+              },
+              child: Text('Retry'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text(
+              currentMessage,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+void getAllData(BuildContext context) {
+  // Show loading screen
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => LoadingScreen()),
+  );
+
+  // Retrieve all data
+  Future.wait([
+    UserDb.get(),
+    PostDb.get(),
+    ChatDb.get(),
+    CommentDb.get(),
+    FollowersDb.get(),
+    ProductDb.get(),
+    TradeDb.get(),
+  ]).then((_) {
+    // Data retrieval complete, navigate to sign-in screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+    );
+  }).catchError((error) {
+    // Handle error if any
+    Fluttertoast.showToast(msg:'Error retrieving data: $error');
+  });
 }

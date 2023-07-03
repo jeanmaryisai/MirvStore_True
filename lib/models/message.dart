@@ -41,6 +41,23 @@ class Message {
 
 
 
+
+  Message copyWith({
+    String? message,
+    DateTime? send,
+    String? trade,
+    String? myId,
+    String? sender,
+  }) {
+    return Message(
+      message: message ?? this.message,
+      send: send ?? this.send,
+      trade: trade ?? this.trade,
+      myId: myId ?? this.myId,
+      sender: sender ?? this.sender,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'message': message,

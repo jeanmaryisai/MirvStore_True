@@ -122,7 +122,7 @@ class _SignInState extends State<SignIn> {
                         padding: const EdgeInsets.all(12.5),
                         child: Image(
                           fit: BoxFit.contain,
-                          image: AssetImage('assets/images/images.jfif'),
+                          image: NetworkImage('assets/images/images.jfif'),
                         ),
                       )),
                 ),

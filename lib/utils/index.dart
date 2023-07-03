@@ -77,7 +77,7 @@ class _IndexState extends State<Index> {
             visible: !profile,
             replacement: CircleAvatar(
               radius: 15,
-              backgroundImage: AssetImage(item['img']),
+              backgroundImage: NetworkImage(item['img']),
             ),
             child: SvgPicture.asset(
               item['img'],

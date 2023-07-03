@@ -28,7 +28,7 @@ class RepostDialog extends StatelessWidget {
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundImage: AssetImage(users.firstWhere((element) => element.myId== products.firstWhere((element) => element.myId== post.product).owner).profile),
+                        backgroundImage: NetworkImage(users.firstWhere((element) => element.myId== products.firstWhere((element) => element.myId== post.product).owner).profile),
                         radius: 25,
                       ),
                       SizedBox(
@@ -47,7 +47,9 @@ class RepostDialog extends StatelessWidget {
                           ),
                           SizedBox(height: 7),
                           Text(
-                            "This is the ${products.firstWhere((element) => element.myId ==post.product).title} put on the market by ${users.firstWhere((element) => element.myId==products.firstWhere((element) => element.myId ==post.product).owner).username}",
+                            "put on the market by ${users.firstWhere((element) => element.myId==products.firstWhere((element) => element.myId ==post.product).owner).username}",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color.fromARGB(255, 189, 187, 187),
@@ -72,7 +74,7 @@ class RepostDialog extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    "When you repost a Product, anyone who is interested by it will be automatically be redirected by the owner, but you will keep the likes on your page",
+                    "When you repost a Product, anyone who is interested by it will be automatically be redirected to the owner, but you will keep the likes on your page. The owner can delete the product wich will delete this post",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 189, 187, 187),
@@ -88,7 +90,7 @@ class RepostDialog extends StatelessWidget {
             // Thumbnail of the post
             Container(
               height: 120,
-              child: Image.asset(
+              child: Image.network(
                 products.firstWhere((element) => element.myId ==post.product).image,
                 fit: BoxFit.cover,
               ),

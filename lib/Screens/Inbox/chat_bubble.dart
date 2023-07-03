@@ -255,7 +255,7 @@ class _NegociationCardState extends State<NegociationCard> {
             SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(25),
-              child: Image.asset(
+              child: Image.network(
                 products.firstWhere((element) => element.myId ==widget.trade.product).image,
                 height: 130,
                 width: MediaQuery.of(context).size.width / 1.3,

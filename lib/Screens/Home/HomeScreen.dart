@@ -1,3 +1,10 @@
+// import 'dart:html';
+
+import 'dart:io';
+
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hello/Screens/Home/home_card.dart';
 import 'package:hello/Screens/hiddenPage.dart';
 import 'package:hello/Screens/sign_in/sign_in_screen.dart';
@@ -8,8 +15,12 @@ import 'package:hello/models/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:ui';
 
+import '../../database.dart';
 import '../../listWiew.dart';
 import '../../other_app/main.dart';
 import '../../utils.dart';
@@ -25,7 +36,35 @@ class HomeScreen extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
+
+
+
 class _HomeState extends State<HomeScreen> {
+  var _postSub,_productSub,_userSub,_commentSub,_followersSub;
+  @override
+  void initState() {
+    super.initState();
+    _postSub = listenToPosts();
+    _productSub = listenToProducts();
+    _userSub = listenToUsers();
+    _commentSub = listenToComments();
+    _followersSub = listenToFollowers();
+    // Start listening to changes in the "products" collection
+  }
+  File? _image;String? url;DatabaseReference? dbRef;
+  final picker = ImagePicker();
+
+  // @override
+  // void dispose() {
+  //   _postSub?.dispose();
+  //   _productSub?.dispose();
+  //   _userSub?.dispose();
+  //   _commentSub?.dispose();
+  //   _followersSub?.dispose();
+  //   super.dispose();
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -34,6 +73,7 @@ class _HomeState extends State<HomeScreen> {
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.dark),
     );
+
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -72,7 +112,7 @@ class _HomeState extends State<HomeScreen> {
                                     ),
                                   ),
                                   SizedBox(width: 20),
-                                  // currentUser.isSellerTrue()?
+                                  currentUser.isSellerTrue()?
                                   InkWell(
                                     onTap: () {
                                       Navigator.push(
@@ -97,7 +137,7 @@ class _HomeState extends State<HomeScreen> {
                                       height: 30,
                                     ),
                                   )
-                                      // :SizedBox()
+                                      :SizedBox()
                                   ,
                                   SizedBox(width: 20),
                                   // SvgPicture.asset(
@@ -181,8 +221,129 @@ class _HomeState extends State<HomeScreen> {
                                                 onTap: () {
                                                   // Handle change profile picture action
 
-                                                  Navigator.pop(context);
-                                                  showCropDialog(context);
+                                                  void showProfilePictureDialog(BuildContext context) {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        File? selectedImage;
+
+                                                        return Dialog(
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(10.0),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.all(16.0),
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Text(
+                                                                  'Change Profile Picture',
+                                                                  style: TextStyle(
+                                                                    fontSize: 18.0,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(height: 16.0),
+                                                                if (selectedImage != null)
+                                                                  Image.file(
+                                                                    selectedImage,
+                                                                    width: 150.0,
+                                                                    height: 150.0,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                SizedBox(height: 16.0),
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                  children: [
+                                                                    ElevatedButton(
+                                                                      onPressed: () async {
+                                                                        final imagePicker = ImagePicker();
+                                                                        final pickedImage = await imagePicker.pickImage(
+                                                                          source: ImageSource.camera,
+                                                                        );
+
+                                                                        if (pickedImage != null) {
+                                                                          setState(() {
+                                                                            selectedImage = File(pickedImage.path);
+                                                                          });
+                                                                        }
+                                                                      },
+                                                                      child: Text('Take Picture'),
+                                                                    ),
+                                                                    ElevatedButton(
+                                                                      onPressed: () async {
+                                                                        final imagePicker = ImagePicker();
+                                                                        final pickedImage = await imagePicker.pickImage(
+                                                                          source: ImageSource.gallery,
+                                                                        );
+
+                                                                        if (pickedImage != null) {
+                                                                          setState(() {
+                                                                            selectedImage = File(pickedImage.path);
+                                                                          });
+                                                                        }
+                                                                      },
+                                                                      child: Text('Choose from Files'),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(height: 16.0),
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                                  children: [
+                                                                    TextButton(
+                                                                      onPressed: () {
+                                                                        Navigator.pop(context); // Close the dialog without saving
+                                                                      },
+                                                                      child: Text(
+                                                                        'Cancel',
+                                                                        style: TextStyle(color: Colors.grey),
+                                                                      ),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed: () async{
+                                                                        if (selectedImage != null) {
+
+                                                                          try{
+                                                                            var imagefile = FirebaseStorage.instance
+                                                                                .ref()
+                                                                            // .child("contact_photo")
+                                                                                .child("profile_pic")
+                                                                                .child("/${Uuid().v4()}.jpg");
+                                                                            UploadTask task = imagefile.putFile(selectedImage!);
+                                                                            TaskSnapshot snapshot = await task;
+                                                                            url = await snapshot.ref.getDownloadURL();
+                                                                            currentUser.profile=url??currentUser.profile;
+
+                                                                            UserDb.update(currentUser, currentUser.myId);
+
+
+                                                                          }
+                                                                          catch(e){
+                                                                            Fluttertoast.showToast(msg: "Error while posting : $e");
+                                                                          }
+                                                                          // saveUserProfile(selectedImage);
+
+
+
+                                                                        }
+                                                                        Navigator.pop(context); // Close the dialog
+                                                                      },
+                                                                      child: Text(
+                                                                        'Save',
+                                                                        style: TextStyle(color: Colors.blue),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+
                                                   // Implement the logic to change the profile picture
                                                 },
                                               ),
@@ -255,7 +416,7 @@ class _HomeState extends State<HomeScreen> {
                                                             2.0),
                                                     child: CircleAvatar(
                                                       backgroundImage:
-                                                          AssetImage(currentUser
+                                                          NetworkImage(currentUser
                                                               .profile),
                                                       radius: 25,
                                                     ),
@@ -508,62 +669,7 @@ void showAddressDialog(BuildContext context) {
   );
 }
 
-void showCropDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
-            color: Colors.white,
-          ),
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Crop Profile Picture',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
-                  color: Colors.blue,
-                ),
-              ),
-              SizedBox(height: 20.0),
-              Container(
-                width: double.infinity,
-                height: 200.0,
-                color: Colors.grey.withOpacity(0.3),
-                // Add your image cropping widget here
-              ),
-              SizedBox(height: 20.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Save the cropped profile picture and close the dialog
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: Text(
-                  'Save',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
+
 
 class ConfirmationDialog extends StatefulWidget {
   @override

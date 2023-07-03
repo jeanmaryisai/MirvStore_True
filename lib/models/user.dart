@@ -17,7 +17,7 @@ class User {
     required this.password,
     this.bio = "Hello I am user Mirv_store",
     required this.myId,
-    required this.profile,
+    this.profile='https://firebasestorage.googleapis.com/v0/b/mirv-59f7c.appspot.com/o/profile_pic%2Fuser.png?alt=media&token=dfae2a1a-ee99-4889-9749-e589808c3c9b',
     this.isSeller,
     this.address='',
   });

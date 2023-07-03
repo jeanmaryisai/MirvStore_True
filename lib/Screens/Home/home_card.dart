@@ -66,7 +66,7 @@ class _HomeCardState extends State<HomeCard> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage(products.firstWhere((element) => element.myId==widget.post.product).image),
+                    image: NetworkImage(products.firstWhere((element) => element.myId==widget.post.product).image),
                   ),
                   borderRadius: BorderRadius.circular(35),
                 ),
@@ -77,7 +77,7 @@ class _HomeCardState extends State<HomeCard> {
           Positioned(
             top: 30,
             left: 30,
-            child: Row(
+            child: Column(
               children: [
                 Container(
                   decoration: BoxDecoration(
@@ -96,7 +96,7 @@ class _HomeCardState extends State<HomeCard> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
                     color: Color.fromARGB(102, 217, 75, 252),
@@ -485,7 +485,7 @@ class _HomeCardState extends State<HomeCard> {
                         children: [
                           CircleAvatar(
                             backgroundImage:
-                            AssetImage( users.firstWhere((element) => element.myId==widget.post.author).profile),
+                            NetworkImage( users.firstWhere((element) => element.myId==widget.post.author).profile),
                             radius: 25,
                           ),
                           users.firstWhere((element) => element.myId==widget.post.author).isSellerTrue()

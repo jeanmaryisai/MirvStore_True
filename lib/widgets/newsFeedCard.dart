@@ -42,7 +42,7 @@ class NewsFeedCard extends StatelessWidget {
                       Row(
                         children: [
                           CircleAvatar(
-                              backgroundImage: AssetImage(nf.avatarUrl)),
+                              backgroundImage: NetworkImage(nf.avatarUrl)),
                           SizedBox(
                             width: 10,
                           ),
@@ -77,7 +77,7 @@ class NewsFeedCard extends StatelessWidget {
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
-                                  child: Image(image: AssetImage(nf.imageUrl))),
+                                  child: Image(image: NetworkImage(nf.imageUrl))),
                             )
                           : SizedBox.shrink(),
                       SizedBox(height: 15),

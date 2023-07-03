@@ -2,6 +2,7 @@ import 'package:hello/Screens/DisCover/DiscoverScreen.dart';
 import 'package:hello/Screens/Home/HomeScreen.dart';
 import 'package:hello/Screens/Inbox/InboxScreen.dart';
 import 'package:hello/Screens/profile/ProfileScreen.dart';
+import 'package:hello/components/data.dart';
 import 'package:hello/components/enums.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +63,7 @@ class CustomNavBar extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           if (!(route!.settings.name == "/home"))
-                            Navigator.pushNamed(context, HomeScreen.routeName);
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>HomeScreen()));
                         },
                         child: Column(
                           children: [
@@ -100,7 +101,7 @@ class CustomNavBar extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         if (!(route!.settings.name == "/discover"))
-                          Navigator.pushNamed(context, Discover.routeName);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Discover()));
                       },
                       child: Container(
                         decoration: MenuState.discover == selectedMenu
@@ -168,7 +169,7 @@ class CustomNavBar extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           if (!(route!.settings.name == "/inbox"))
-                            Navigator.pushNamed(context, InboxScreen.routeName);
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>InboxScreen()));
                         },
                         child: Column(
                           children: [
@@ -218,10 +219,12 @@ class CustomNavBar extends StatelessWidget {
                           : null,
                       child: GestureDetector(
                         onTap: () {
-                          if (!(route!.settings.name == "/profile"))
-                            Navigator.pushNamed(
-                                context, ProfileScreen.routeName);
-                        },
+                          if (!(route!.settings.name == "/profile")) {
+
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (_) =>
+                                    ProfileScreen(user: currentUser)));
+                          }},
                         child: Column(
                           children: [
                             Container(

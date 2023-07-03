@@ -11,6 +11,7 @@ import 'package:hello/components/enums.dart';
 import 'package:intl/intl.dart';
 
 import '../../components/data.dart';
+import '../../database.dart';
 import '../../models/post.dart';
 import '../../models/user.dart';
 import '../../utils.dart';
@@ -33,6 +34,28 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   static Random random = Random();
   NumberFormat numberFormat = NumberFormat.compact();
+
+  var _postSub,_productSub,_userSub,_commentSub,_followersSub;
+  @override
+  void initState() {
+    super.initState();
+    _postSub = listenToPosts();
+    _productSub = listenToProducts();
+    _userSub = listenToUsers();
+    _commentSub = listenToComments();
+    _followersSub = listenToFollowers();
+    // Start listening to changes in the "products" collection
+  }
+
+  @override
+  void dispose() {
+    _postSub?.cancel();
+    _productSub?.dispose();
+    _userSub?.dispose();
+    _commentSub?.dispose();
+    _followersSub?.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -100,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // Stack(
                           // children: [
                             CircleAvatar(
-                              backgroundImage: AssetImage(widget.user.profile),
+                              backgroundImage: NetworkImage(widget.user.profile),
                               radius: 25,
                             ),
                         //     widget.user.isSellerTrue()
@@ -444,7 +467,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15.0),
-                                child: Image.asset(
+                                child: Image.network(
                                   products.firstWhere((element) => element.myId ==post.product).image,
                                   fit: BoxFit.fill,
                                 ),

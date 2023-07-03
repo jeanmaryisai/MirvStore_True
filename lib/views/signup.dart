@@ -136,7 +136,7 @@ class SignUp extends StatelessWidget {
                         SizedBox(height: getProportionateScreenHeight(50)),
                         CircleAvatar(
                           radius: 55,
-                          backgroundImage: AssetImage('assets/images/user.jpg'),
+                          backgroundImage: NetworkImage('assets/images/user.jpg'),
                         ),
                         SizedBox(
                           height: getProportionateScreenHeight(40),

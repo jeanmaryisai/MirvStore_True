@@ -7,6 +7,7 @@ import 'package:hello/components/enums.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hello/database.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/chat.dart';
@@ -21,6 +22,27 @@ class InboxScreen extends StatefulWidget {
 
 class _ChatsState extends State<InboxScreen>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  var _userSub,_chatSub,_tradeSub,_productSub;
+
+  @override
+  void initState() {
+
+    super.initState();
+    _userSub =listenToUsers();
+    _chatSub = listenToChats();
+    _tradeSub = listenToTrades();
+    _productSub = listenToProducts();
+  }
+  //
+  // @override
+  // void dispose() {
+  //   _userSub?.dispose();
+  //   _chatSub?.dispose();
+  //   _tradeSub?.dispose();
+  //   _productSub?.dispose();
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -102,6 +124,7 @@ class _ChatsState extends State<InboxScreen>
                           itemCount: chats.length,
                           itemBuilder: (BuildContext context, int index) {
                             Chat chat = chats[index];
+
                             return ChatItem(
                               chat: chat,
                             );
@@ -203,34 +226,36 @@ class _UserListDialogState extends State<UserListDialog>
                       ),
                     ),
                     SizedBox(height: 20),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: filteredUsers.length,
-                      itemBuilder: (context, index) {
-                        User user = filteredUsers[index];
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: AssetImage(user.profile),
-                          ),
-                          title: Text(user.username),
-                          onTap: () {
-                            Chat chat = Chat( myId: Uuid().v4(),
-                                user1: currentUser.myId, user2: user.myId, messages: []);
-                            chats.any((element) =>
-                                    element.theOrther() == user.myId)
-                                ? chat = chats.firstWhere((element) =>
-                                    element.theOrther() == user.myId)
-                                : print('no ${chat.messages.length}');
-                            Navigator.of(context).pop;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Conversation(chat: chat),
-                              ),
-                            );
-                          },
-                        );
-                      },
+                    SingleChildScrollView(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredUsers.length,
+                        itemBuilder: (context, index) {
+                          User user = filteredUsers[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(user.profile),
+                            ),
+                            title: Text(user.username),
+                            onTap: () {
+                              Chat chat = Chat( myId: Uuid().v4(),
+                                  user1: currentUser.myId, user2: user.myId, messages: []);
+                              chats.any((element) =>
+                                      element.theOrther() == user.myId)
+                                  ? chat = chats.firstWhere((element) =>
+                                      element.theOrther() == user.myId)
+                                  : print('no ${chat.messages.length}');
+                              Navigator.of(context).pop;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Conversation(chat: chat),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

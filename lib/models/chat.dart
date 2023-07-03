@@ -32,23 +32,6 @@ List<Message> getMessagesOrderedByMostRecent() {
 
 
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'user1': user1,
-      'user2': user2,
-      'messages': messages.map((x) => x.toMap()).toList(),
-      'myId': myId,
-    };
-  }
-
-  factory Chat.fromMap(Map<String, dynamic> map) {
-    return Chat(
-      user1: map['user1'] as String,
-      user2: map['user2'] as String,
-      messages: List<Message>.from((map['messages'] as List<int>).map<Message>((x) => Message.fromMap(x as Map<String,dynamic>),),),
-      myId: map['myId'] as String,
-    );
-  }
 
   String toJson() => json.encode(toMap());
 
@@ -77,12 +60,43 @@ List<Message> getMessagesOrderedByMostRecent() {
       messages.hashCode ^
       myId.hashCode;
   }
+
+  Chat copyWith({
+    String? user1,
+    String? user2,
+    List<Message>? messages,
+    String? myId,
+  }) {
+    return Chat(
+      user1: user1 ?? this.user1,
+      user2: user2 ?? this.user2,
+      messages: messages ?? this.messages,
+      myId: myId ?? this.myId,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'user1': user1,
+      'user2': user2,
+      'messages': messages.map((x) => x.toMap()).toList(),
+      'myId': myId,
+    };
+  }
+
+  factory Chat.fromMap(Map<String, dynamic> map) {
+    return Chat(
+      user1: map['user1'] as String,
+      user2: map['user2'] as String,
+      messages: List<Message>.from((map['messages'] as List<dynamic>).map<Message>((x) => Message.fromMap(x as Map<String,dynamic>),),),
+      myId: map['myId'] as String,
+    );
+  }
 }
 List<Chat> getChatsOrderedByMostRecent() {
-  chats
+      chats.sort((a,b)=>a.getMessagesOrderedByMostRecent().first.send.compareTo(b.getMessagesOrderedByMostRecent().first.send));
+  return chats
       .where((element) => element.user1==currentUser.myId||element.user2==currentUser.myId)
-      .toList()
+      .toList();
 
-      .sort((a,b)=>a.getMessagesOrderedByMostRecent().first.send.compareTo(b.getMessagesOrderedByMostRecent().first.send));
-  return chats.reversed.toList();
 }

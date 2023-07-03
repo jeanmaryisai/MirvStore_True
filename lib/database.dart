@@ -9,7 +9,7 @@ import 'components/data.dart';
 import 'models/Product.dart';
 import 'models/chat.dart';
 import 'models/message.dart';
-import 'models/notifs.dart';
+// import 'models/notifs.dart';
 import 'models/post.dart';
 import 'models/trade.dart';
 import 'models/user.dart';import 'package:cloud_firestore/cloud_firestore.dart';
@@ -236,59 +236,6 @@ abstract class PostDb {
   }
 }
 
-// abstract class NotificationCustomDb {
-//   static Future<void> add(NotificationCustom notification) async {
-//     final db = FirebaseFirestore.instance;
-//     final notifications = db.collection("notifications");
-//     notifications.doc(notification.myId).set(notification.toMap());
-//   }
-//
-//   static Future<void> delete(String notificationId) async {
-//     try {
-//       // Get a reference to the notification document in Firestore
-//       DocumentReference notificationRef =
-//       FirebaseFirestore.instance.collection('notifications').doc(notificationId);
-//
-//       // Delete the notification document
-//       await notificationRef.delete();
-//       print('Notification deleted successfully');
-//     } catch (error) {
-//       print('Failed to delete notification: $error');
-//     }
-//   }
-//
-//   static Future<void> update(NotificationCustom updatedNotification, String notificationId) async {
-//     try {
-//       DocumentReference notificationRef =
-//       FirebaseFirestore.instance.collection('notifications').doc(notificationId);
-//
-//       // Convert the updatedNotification object to a Map
-//       Map<String, dynamic> notificationData = updatedNotification.toMap();
-//
-//       // Update the notification document with the new data
-//       await notificationRef.update(notificationData);
-//       print('Notification updated successfully');
-//     } catch (error) {
-//       print('Failed to update notification: $error');
-//     }
-//   }
-//
-//   static Future<void> get() async {
-//     final db = FirebaseFirestore.instance;
-//
-//     db.collection("notifications").get().then(
-//           (querySnapshot) {
-//         print("Successfully completed");
-//         for (var doc in querySnapshot.docs) {
-//           final data = doc.data() as Map<String, dynamic>;
-//           notifs.add(NotificationCustom.fromMap(data));
-//         }
-//       },
-//       onError: (e) => print("Error completing: $e"),
-//     );
-//   }
-// }
-
 abstract class MessageDb {
   static Future<void> add(Message message) async {
     final db = FirebaseFirestore.instance;
@@ -336,7 +283,7 @@ abstract class MessageDb {
           final data = doc.data() as Map<String, dynamic>;
           c.add(Message.fromMap(data));
         }
-        messages=c;
+        messagesGenerales=c;
       },
       onError: (e) => print("Error completing: $e"),
     );
@@ -463,19 +410,21 @@ abstract class ChatDb {
     final chatsCollection = db.collection("chats");
 
     await chatsCollection.doc(chatId).delete();
+
   }
 
   static Future<void> updateChat(Chat updatedChat, String chatId) async {
     final db = FirebaseFirestore.instance;
     final chatsCollection = db.collection("chats");
+    await chatsCollection.doc(chatId).delete();
+    chatsCollection.doc(updatedChat.myId).set(updatedChat.toMap());
 
-    chatsCollection.doc(chatId).update(updatedChat.toMap());
   }
 
   static Future<void> get() async {
     final db = FirebaseFirestore.instance;
     List<Chat> c=[];
-    db.collection("comments").get().then(
+    db.collection("chats").get().then(
           (querySnapshot) {
         print("Successfully completed");
         for (var doc in querySnapshot.docs) {
@@ -490,15 +439,76 @@ abstract class ChatDb {
   }
 }
 
-StreamSubscription<QuerySnapshot> listenToDatabaseChanges() {
+StreamSubscription<QuerySnapshot> listenToChats() {
   final db = FirebaseFirestore.instance;
   final chatsCollection = db.collection("chats");
 
   return chatsCollection.snapshots().listen((snapshot) {
     // Trigger the reloadData() function whenever there is a change in the database
-    // reloadData();
+    ChatDb.get();
   });
 }
+
+StreamSubscription<QuerySnapshot> listenToTrades() {
+  final db = FirebaseFirestore.instance;
+  final tradesCollection = db.collection("trades");
+
+  return tradesCollection.snapshots().listen((snapshot) {
+    // Trigger the reloadData() function whenever there is a change in the database
+    TradeDb.get();
+  });
+}
+
+StreamSubscription<QuerySnapshot> listenToFollowers() {
+  final db = FirebaseFirestore.instance;
+  final followersCollection = db.collection("followers");
+
+  return followersCollection.snapshots().listen((snapshot) {
+    // Trigger the reloadData() function whenever there is a change in the database
+    FollowersDb.get();
+  });
+}
+
+StreamSubscription<QuerySnapshot> listenToUsers() {
+  final db = FirebaseFirestore.instance;
+  final usersCollection = db.collection("users");
+
+  return usersCollection.snapshots().listen((snapshot) {
+    // Trigger the reloadData() function whenever there is a change in the database
+    UserDb.get();
+  });
+}
+
+StreamSubscription<QuerySnapshot> listenToProducts() {
+  final db = FirebaseFirestore.instance;
+  final productsCollection = db.collection("products");
+
+  return productsCollection.snapshots().listen((snapshot) {
+    // Trigger the reloadData() function whenever there is a change in the database
+    ProductDb.get();
+  });
+}
+
+StreamSubscription<QuerySnapshot> listenToPosts() {
+  final db = FirebaseFirestore.instance;
+  final postsCollection = db.collection("posts");
+
+  return postsCollection.snapshots().listen((snapshot) {
+    // Trigger the reloadData() function whenever there is a change in the database
+    PostDb.get();
+  });
+}
+
+StreamSubscription<QuerySnapshot> listenToComments() {
+  final db = FirebaseFirestore.instance;
+  final commentsCollection = db.collection("comments");
+
+  return commentsCollection.snapshots().listen((snapshot) {
+    // Trigger the reloadData() function whenever there is a change in the database
+    CommentDb.get();
+  });
+}
+
 
 void retrieveAllData(){
   UserDb.get();

@@ -37,7 +37,7 @@ class NotificationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CircleAvatar(
-                          backgroundImage: AssetImage(notification.avatarUrl)),
+                          backgroundImage: NetworkImage(notification.avatarUrl)),
                     ],
                   ),
                   Column(

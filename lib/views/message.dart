@@ -58,7 +58,7 @@ class _MessageState extends State<Message> {
                         onPressed: () {},
                       ),
                       CircleAvatar(
-                          backgroundImage: AssetImage(widget.avatarUrl)),
+                          backgroundImage: NetworkImage(widget.avatarUrl)),
                       SizedBox(width: 5.0),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

@@ -51,7 +51,7 @@ class _TradesState extends State<Trades> {
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: CircleAvatar(
-                            backgroundImage: AssetImage(
+                            backgroundImage: NetworkImage(
                               friend["dp"],
                             ),
                           ),

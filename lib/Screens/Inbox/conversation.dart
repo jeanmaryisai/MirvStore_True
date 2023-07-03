@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../database.dart';
 import '../../models/chat.dart';
 import '../../models/message.dart';
 import '../../utils.dart';
@@ -23,8 +24,29 @@ class Conversation extends StatefulWidget {
 
 class _ConversationState extends State<Conversation> {
   static Random random = Random();
-  String name = names[random.nextInt(10)];
+  // String name = names[random.nextInt(10)];
   ScrollController _scrollController = ScrollController();
+
+  var _userSub,_chatSub,_tradeSub,_productSub;
+
+  @override
+  void initState() {
+
+    super.initState();
+    _userSub =listenToUsers();
+    _chatSub = listenToChats();
+    _tradeSub = listenToTrades();
+    _productSub = listenToProducts();
+  }
+
+  // @override
+  // void dispose() {
+  //   _userSub?.dispose();
+  //   _chatSub?.dispose();
+  //   _tradeSub?.dispose();
+  //   _productSub?.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +92,7 @@ class _ConversationState extends State<Conversation> {
                     child: Padding(
                       padding: const EdgeInsets.all(2.0),
                       child: CircleAvatar(
-                        backgroundImage: AssetImage(
+                        backgroundImage: NetworkImage(
                           "${users.firstWhere((element) => element.myId==widget.chat.theOrther()).profile}",
                         ),
                       ),
@@ -125,9 +147,10 @@ class _ConversationState extends State<Conversation> {
                       List<Chat> chats = snapshot.data!;
 
                       if (chats.isNotEmpty) {
-                        Chat? chat;
+                        Chat? _chat;
                         try {
-                          chat = chats.firstWhere((element) => element.myId == widget.chat.myId);
+
+                          _chat = chats.firstWhere((element) => element.myId == widget.chat.myId);
                         } catch (e) {
                           // Handle case when chat is not found
                           return Center(
@@ -135,8 +158,8 @@ class _ConversationState extends State<Conversation> {
                           );
                         }
 
-                        if (chat != null && chat.messages.isNotEmpty) {
-                          List<Message> messages = chat.messages;
+                        if (_chat != null && _chat.messages.isNotEmpty) {
+                          List<Message> messages = chats.firstWhere((element) => element.myId == widget.chat.myId).messages;
 
                           return ListView.builder(
                             controller: _scrollController,
@@ -144,7 +167,7 @@ class _ConversationState extends State<Conversation> {
                             itemCount: messages.length,
                             reverse: true,
                             itemBuilder: (BuildContext context, int index) {
-                              Message msg = messages[index];
+                              Message msg =chats.firstWhere((element) => element.myId == widget.chat.myId).messages[index];
                               return ChatBubble(msg: msg, chatid: widget.chat.myId, refresh: () => setState(() {}));
                             },
                           );

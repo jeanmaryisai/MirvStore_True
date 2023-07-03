@@ -61,7 +61,7 @@
 //                     child: Padding(
 //                       padding: const EdgeInsets.all(2.0),
 //                       child: CircleAvatar(
-//                         backgroundImage: AssetImage(friend.profile),
+//                         backgroundImage: NetworkImage(friend.profile),
 //                       ),
 //                     ),
 //                   ),

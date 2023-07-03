@@ -203,6 +203,27 @@ class _NewPostState extends State<NewPost> {
                         ],
                       ),
               ),
+            ),Container(
+              width: 100,
+              height: 300,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+              ),
+              child: _image != null
+                  ? Image.file(_image!, fit: BoxFit.cover)
+                  : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/comment.svg',
+                    width: 48,
+                    height: 48,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 8),
+                  Text('Tap to select an image'),
+                ],
+              ),
             ),
             SizedBox(height: 16),
             TextField(

@@ -31,7 +31,7 @@ class MessagesCard extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundImage: AssetImage(message.avatarUrl),
+                            backgroundImage: NetworkImage(message.avatarUrl),
                           ),
                           message.online == true
                               ? Positioned(
