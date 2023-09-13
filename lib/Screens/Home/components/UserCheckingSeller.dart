@@ -149,8 +149,8 @@ class _UserInformationDialogState extends State<UserInformationDialog> {
 
       final smtpServer = SmtpServer(
         'smtp.gmail.com',
-        username: 'isaitest334@gmail.com',
-        password: 'mgotweqrwrtmvsfo',
+        username: 'isaitest334@gmail.com',//put the righ email
+        password: '*************',//put the right password
         port: 587,
         ssl: false,
         // tls: true
